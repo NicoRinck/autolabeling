@@ -18,32 +18,37 @@ public class JsonToMarkerConverter {
     private static final String TRIAL_PROPERTY = "trial";
     private static final String FRAMES_PROPERTY = "frames";
 
-
-    public ArrayList<Marker> getMarkersFromJson(String fileName) {
+    public ArrayList<ArrayList<Marker>> getMarkersFromJson(String fileName) {
         JsonObject jsonObject = getJsonObjectFromFile(fileName);
+        ArrayList<ArrayList<Marker>> markers = new ArrayList<ArrayList<Marker>>();
         if (jsonObject != null && jsonObject.has(TRIAL_PROPERTY)) {
             JsonArray jsonArray = getFramesArray(jsonObject);
-            getMarkersFromJsonObject(jsonArray.get(0).getAsJsonObject());
+            for (JsonElement jsonElement : jsonArray) {
+                markers.add(getMarkersFromJsonObject(jsonElement.getAsJsonObject()));
+            }
         }
-        return null;
+        return markers;
     }
 
     private ArrayList<Marker> getMarkersFromJsonObject(JsonObject jsonObject) {
-        for (String s : getLabels(jsonObject)) {
-            System.out.println(s);
+        final Set<String> markerLabels = getMarkerLabels(jsonObject);
+        final ArrayList<Marker> markerList = new ArrayList<Marker>();
+        for (String markerLabel : markerLabels) {
+            markerList.add(new Marker(
+                    markerLabel,
+                    jsonObject.get(markerLabel + "_x").getAsDouble(),
+                    jsonObject.get(markerLabel + "_y").getAsDouble(),
+                    jsonObject.get(markerLabel + "_z").getAsDouble()
+            ));
         }
-        final Set<Map.Entry<String, JsonElement>> entries = jsonObject.entrySet();
-        for (Map.Entry<String, JsonElement> entry : entries) {
-            /*System.out.println(entry.getKey());*/
-        }
-        return null;
+        return markerList;
     }
 
-    private Set<String> getLabels(JsonObject sampleObject) {
+    private Set<String> getMarkerLabels(JsonObject sampleObject) {
         Set<String> labels = new TreeSet<String>();
         for (Map.Entry<String, JsonElement> jsonPropertyEntry : sampleObject.entrySet()) {
-            int indexOfSeperator = jsonPropertyEntry.getKey().indexOf("_");
-            labels.add(jsonPropertyEntry.getKey().substring(0,indexOfSeperator +1));
+            int indexOfSeparator = jsonPropertyEntry.getKey().indexOf("_");
+            labels.add(jsonPropertyEntry.getKey().substring(0, indexOfSeparator));
         }
 
         return labels;
@@ -52,7 +57,6 @@ public class JsonToMarkerConverter {
     private JsonArray getFramesArray(JsonObject jsonObject) {
         return jsonObject.getAsJsonObject(TRIAL_PROPERTY).getAsJsonArray(FRAMES_PROPERTY);
     }
-
 
     private InputStream getJSONFromResource(String name) {
         return this.getClass().getResourceAsStream("/" + name + ".json");
