@@ -1,4 +1,4 @@
-package process_data;
+package preprocess_data;
 
 public class Test {
 
@@ -6,7 +6,9 @@ public class Test {
 
     public static void main(String[] args) {
         JsonToMarkerConverter jsonToMarkerConverter = new JsonToMarkerConverter();
-        jsonToMarkerConverter.getMarkersFromJson(testString);
+        for (Marker marker : jsonToMarkerConverter.getTrialDataFromJson(testString).get(0)) {
+            System.out.println(marker.toString());
+        }
     }
 
 }

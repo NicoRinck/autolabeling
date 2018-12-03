@@ -1,4 +1,4 @@
-package process_data;
+package preprocess_data;
 
 public class Marker {
 
@@ -12,6 +12,11 @@ public class Marker {
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    @Override
+    public String toString() {
+        return label + ": (" + x + "," + y + "," + z + ")";
     }
 
     public String getLabel() {
