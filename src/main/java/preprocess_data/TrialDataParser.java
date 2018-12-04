@@ -4,34 +4,29 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class JsonToMarkerConverter {
+public class TrialDataParser {
 
     private final JsonParser jsonParser = new JsonParser();
-    private static final String TRIAL_PROPERTY = "trial";
-    private static final String FRAMES_PROPERTY = "frames";
+    private Set<String> markerLabels;
 
-    public ArrayList<ArrayList<Marker>> getTrialDataFromJson(String fileName) {
-        JsonObject rootJsonObject = getJsonObjectFromFile(fileName);
+
+    public ArrayList<ArrayList<Marker>> getTrialDataFromJson(JsonArray trialData) {
         ArrayList<ArrayList<Marker>> markers = new ArrayList<ArrayList<Marker>>();
-        if (rootJsonObject != null && rootJsonObject.has(TRIAL_PROPERTY)) {
-            JsonArray framesArray = getFramesArray(rootJsonObject);
-            for (JsonElement jsonElement : framesArray) {
-                markers.add(getMarkersFromFrameObject(jsonElement.getAsJsonObject()));
-            }
+        for (JsonElement jsonElement : trialData) {
+            markers.add(getMarkersFromFrameObject(jsonElement.getAsJsonObject()));
         }
         return markers;
     }
 
     private ArrayList<Marker> getMarkersFromFrameObject(JsonObject frameJson) {
-        final Set<String> markerLabels = getMarkerLabels(frameJson);
+        if (markerLabels == null) {
+            markerLabels = getMarkerLabels(frameJson);
+        }
         final ArrayList<Marker> markerList = new ArrayList<Marker>();
         for (String markerLabel : markerLabels) {
             markerList.add(new Marker(markerLabel,
@@ -51,18 +46,5 @@ public class JsonToMarkerConverter {
         }
 
         return labels;
-    }
-
-    private JsonArray getFramesArray(JsonObject jsonObject) {
-        return jsonObject.getAsJsonObject(TRIAL_PROPERTY).getAsJsonArray(FRAMES_PROPERTY);
-    }
-
-    private InputStream getJSONFromResource(String name) {
-        return this.getClass().getResourceAsStream("/" + name + ".json");
-    }
-
-    private JsonObject getJsonObjectFromFile(String fileName) {
-        JsonElement jsonElement = jsonParser.parse(new InputStreamReader(getJSONFromResource(fileName)));
-        return jsonElement.getAsJsonObject();
     }
 }
