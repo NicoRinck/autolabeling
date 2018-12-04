@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class TrialJsonIterator implements Iterator<JsonArray> {
+public class TrialFileIterator implements Iterator<JsonArray> {
 
     private final FileSplit files;
     private final JsonParser jsonParser = new JsonParser();
@@ -18,7 +18,7 @@ public class TrialJsonIterator implements Iterator<JsonArray> {
     private static final String TRIAL_PROPERTY = "trial";
     private static final String FRAMES_PROPERTY = "frames";
 
-    public TrialJsonIterator(FileSplit files) {
+    public TrialFileIterator(FileSplit files) {
         this.files = files;
     }
 

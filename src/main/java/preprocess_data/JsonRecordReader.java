@@ -1,7 +1,6 @@
 package preprocess_data;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import org.datavec.api.conf.Configuration;
 import org.datavec.api.records.Record;
 import org.datavec.api.records.metadata.RecordMetaData;
@@ -13,18 +12,20 @@ import org.datavec.api.writable.Writable;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class JsonRecordReader extends BaseRecordReader {
 
-    TrialDataParser trialDataParser;
-    Configuration configuration;
-    List<List<Marker>> currentFileData;
-    Iterator<JsonArray> iterator;
+    private final TrialDataManager trialDataManager;
+    //TODO: Manager, der bereits vervielfältigte, geshuffelte und gelabelte Daten liefert, über die nur noch iteriert wird
+    private Configuration configuration;
+    private Iterator<JsonArray> fileIterator;
+    private Iterator<ArrayList<Writable>> fileContentIterator;
 
-    public JsonRecordReader(TrialDataParser trialDataParser, boolean scrambleData) {
-        this.trialDataParser = trialDataParser;
+    public JsonRecordReader(TrialDataManager trialDataManager) {
+        this.trialDataManager = trialDataManager;
     }
 
     //only accept File inputSplit
@@ -32,7 +33,8 @@ public class JsonRecordReader extends BaseRecordReader {
         if (!(inputSplit instanceof FileSplit)) {
             throw new IllegalArgumentException("JsonRecordReader is for file Input only");
         }
-        iterator = new TrialJsonIterator((FileSplit) inputSplit);
+        fileIterator = new TrialFileIterator((FileSplit) inputSplit);
+        fileContentIterator = trialDataManager.getTrialDataFromJson(fileIterator.next(),false).iterator();
     }
 
     public void initialize(Configuration configuration, InputSplit inputSplit) throws IOException, InterruptedException, IllegalArgumentException {
@@ -45,7 +47,8 @@ public class JsonRecordReader extends BaseRecordReader {
     }
 
     public boolean hasNext() {
-        return false;
+        return !(!fileIterator.hasNext() && !fileContentIterator.hasNext());
+
     }
 
     public List<String> getLabels() {
