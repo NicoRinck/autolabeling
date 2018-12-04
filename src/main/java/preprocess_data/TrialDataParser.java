@@ -24,7 +24,7 @@ public class TrialDataParser {
     }
 
     private ArrayList<Marker> getMarkersFromFrameObject(JsonObject frameJson) {
-        if (markerLabels == null) {
+        if (markerLabels == null) {//only get lanels once per file
             markerLabels = getMarkerLabels(frameJson);
         }
         final ArrayList<Marker> markerList = new ArrayList<Marker>();

@@ -18,7 +18,7 @@ import java.util.List;
 
 public class JsonRecordReader extends BaseRecordReader {
 
-    TrialDataParser trialDataParser; //TODO: let iterator step through file?
+    TrialDataParser trialDataParser;
     Configuration configuration;
     List<List<Marker>> currentFileData;
     Iterator<JsonArray> iterator;
