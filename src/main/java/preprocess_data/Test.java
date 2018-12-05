@@ -1,6 +1,6 @@
 package preprocess_data;
 
-import datavec.JsonRecordReader;
+import datavec.JsonTrialRecordReader;
 import org.datavec.api.split.FileSplit;
 import preprocess_data.data_manipulator.FrameShuffleManipulator;
 import preprocess_data.labeling.OneTargetLabelingStrategy;
@@ -13,14 +13,14 @@ public class Test {
     private static final String testString = "01_SS_O1_S1_Abd-TEST";
 
     public static void main(String[] args) {
-        JsonRecordReader jsonRecordReader = new JsonRecordReader(
+        JsonTrialRecordReader jsonTrialRecordReader = new JsonTrialRecordReader(
                 new TrialDataManager(new OneTargetLabelingStrategy("RASI"),new FrameShuffleManipulator(3)));
         File file = new File("C:\\Users\\Nico Rinck\\IdeaProjects\\autolabeling\\src\\main\\resources\\01_SS_O1_S1_Abd-TEST.json");
         FileSplit fileSplit = new FileSplit(file);
         try {
-            jsonRecordReader.initialize(fileSplit);
-            while (jsonRecordReader.hasNext()) {
-                System.out.println("Dataset: " + jsonRecordReader.next());
+            jsonTrialRecordReader.initialize(fileSplit);
+            while (jsonTrialRecordReader.hasNext()) {
+                System.out.println("Dataset: " + jsonTrialRecordReader.next());
             }
         } catch (IOException e) {
             e.printStackTrace();

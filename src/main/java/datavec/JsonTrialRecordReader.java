@@ -19,20 +19,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class JsonRecordReader extends BaseRecordReader {
+public class JsonTrialRecordReader extends BaseRecordReader {
 
     private final TrialDataManager trialDataManager;
     private Iterator<JsonArray> fileIterator;
     private Iterator<ArrayList<Writable>> fileContentIterator;
 
-    public JsonRecordReader(TrialDataManager trialDataManager) {
+    public JsonTrialRecordReader(TrialDataManager trialDataManager) {
         this.trialDataManager = trialDataManager;
     }
 
     //only accept File inputSplit
     public void initialize(InputSplit inputSplit) throws IOException, InterruptedException, IllegalArgumentException {
         if (!(inputSplit instanceof FileSplit)) {
-            throw new IllegalArgumentException("JsonRecordReader is for file Input only");
+            throw new IllegalArgumentException("JsonTrialRecordReader is for file Input only");
         }
         fileIterator = new TrialFileIterator((FileSplit) inputSplit);
         fileContentIterator = trialDataManager.getTrialDataFromJson(fileIterator.next()).iterator();
