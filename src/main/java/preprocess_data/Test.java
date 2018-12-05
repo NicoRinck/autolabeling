@@ -11,7 +11,7 @@ public class Test {
 
     public static void main(String[] args) {
         JsonRecordReader jsonRecordReader = new JsonRecordReader(
-                new TrialDataManager(new OneTargetLabelingStrategy("RASI"),null));
+                new TrialDataManager(new OneTargetLabelingStrategy("RASI"),new FrameShuffleManipulator(3)));
         File file = new File("C:\\Users\\Nico Rinck\\IdeaProjects\\autolabeling\\src\\main\\resources\\01_SS_O1_S1_Abd-TEST.json");
         FileSplit fileSplit = new FileSplit(file);
         try {

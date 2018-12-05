@@ -14,7 +14,7 @@ import java.util.TreeSet;
 public class TrialDataManager {
 
     private Set<String> markerLabels;
-    //TODO: Normalisierung? --> analog wie labels holen?
+    //TODO: Normalisierung? --> analog wie labels holen? Normalisation-Klasse, die eine Normaliserungsstrategie entgegennimmt.
     private final MarkerLabelingStrategy markerLabelingStrategy;
     private final FrameDataManipulator manipulator;
 
