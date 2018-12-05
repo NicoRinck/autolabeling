@@ -20,8 +20,6 @@ import java.util.NoSuchElementException;
 public class JsonRecordReader extends BaseRecordReader {
 
     private final TrialDataManager trialDataManager;
-    //TODO: Manager, der bereits vervielfältigte, geshuffelte und gelabelte Daten liefert, über die nur noch iteriert wird
-    private Configuration configuration;
     private Iterator<JsonArray> fileIterator;
     private Iterator<ArrayList<Writable>> fileContentIterator;
 
@@ -35,11 +33,10 @@ public class JsonRecordReader extends BaseRecordReader {
             throw new IllegalArgumentException("JsonRecordReader is for file Input only");
         }
         fileIterator = new TrialFileIterator((FileSplit) inputSplit);
-        fileContentIterator = trialDataManager.getTrialDataFromJson(fileIterator.next(),false).iterator();
+        fileContentIterator = trialDataManager.getTrialDataFromJson(fileIterator.next()).iterator();
     }
 
     public void initialize(Configuration configuration, InputSplit inputSplit) throws IOException, InterruptedException, IllegalArgumentException {
-        this.configuration = configuration;
         initialize(inputSplit);
     }
 
@@ -47,7 +44,7 @@ public class JsonRecordReader extends BaseRecordReader {
         if (fileContentIterator.hasNext()) {
             return fileContentIterator.next();
         } else if(fileIterator.hasNext()) {
-            fileContentIterator = trialDataManager.getTrialDataFromJson(fileIterator.next(), false).iterator();
+            fileContentIterator = trialDataManager.getTrialDataFromJson(fileIterator.next()).iterator();
             return fileContentIterator.next();
         } else {
             throw new NoSuchElementException();

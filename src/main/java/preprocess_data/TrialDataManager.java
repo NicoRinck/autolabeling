@@ -23,11 +23,11 @@ public class TrialDataManager {
         this.manipulator = manipulator;
     }
 
-    public ArrayList<ArrayList<Writable>> getTrialDataFromJson(JsonArray trialData, boolean manipulateData) {
+    public ArrayList<ArrayList<Writable>> getTrialDataFromJson(JsonArray trialData) {
         ArrayList<ArrayList<Writable>> resultList = new ArrayList<ArrayList<Writable>>();
         for (JsonElement jsonElement : trialData) {
             ArrayList<Writable> writables = getLabeledMarkerDataFromFrame(jsonElement.getAsJsonObject());
-            if (manipulateData && manipulator != null) {
+            if (manipulator != null) {
                 resultList.addAll(manipulator.manipulateFrameData(writables));
             } else {
                 resultList.add(writables);
