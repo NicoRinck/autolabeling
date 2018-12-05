@@ -19,4 +19,8 @@ public class Frame {
         }
         return resultList;
     }
+
+    public ArrayList<Marker> getMarkers() {
+        return markers;
+    }
 }

@@ -1,8 +1,7 @@
 package preprocess_data;
 
-import org.datavec.api.writable.Writable;
-
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class FrameShuffleManipulator implements FrameDataManipulator {
 
@@ -13,6 +12,16 @@ public class FrameShuffleManipulator implements FrameDataManipulator {
     }
 
     public ArrayList<Frame> manipulateFrame(Frame frame) {
-        return null;
+        ArrayList<Frame> resultFrames = new ArrayList<Frame>();
+        for (int i = 0; i < amountOfShuffles; i++) {
+            resultFrames.add(getShuffledFrame(frame));
+        }
+        return resultFrames;
+    }
+
+    private Frame getShuffledFrame(Frame frame) {
+        ArrayList<Marker> newList = new ArrayList<Marker>(frame.getMarkers());
+        Collections.shuffle(newList);
+        return new Frame(newList);
     }
 }
