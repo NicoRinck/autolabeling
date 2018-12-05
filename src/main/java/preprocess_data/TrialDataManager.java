@@ -26,28 +26,37 @@ public class TrialDataManager {
     public ArrayList<ArrayList<Writable>> getTrialDataFromJson(JsonArray trialData) {
         ArrayList<ArrayList<Writable>> resultList = new ArrayList<ArrayList<Writable>>();
         for (JsonElement jsonElement : trialData) {
-            ArrayList<Writable> writables = getLabeledMarkerDataFromFrame(jsonElement.getAsJsonObject());
+            Frame frame = getLabeledMarkerDataFromFrame(jsonElement.getAsJsonObject());
             if (manipulator != null) {
-                resultList.addAll(manipulator.manipulateFrameData(writables));
+                ArrayList<Frame> manipulatedFrames = manipulator.manipulateFrame(frame);
+                resultList.addAll(getResultList(manipulatedFrames));
             } else {
-                resultList.add(writables);
+                resultList.add(frame.getFrameAsWritables());
             }
         }
         return resultList;
     }
 
-    private ArrayList<Writable> getLabeledMarkerDataFromFrame(JsonObject frameJson) {
+    private ArrayList<ArrayList<Writable>> getResultList(ArrayList<Frame> frames) {
+        ArrayList<ArrayList<Writable>> resultList = new ArrayList<ArrayList<Writable>>();
+        for (Frame frame : frames) {
+            resultList.add(frame.getFrameAsWritables());
+        }
+        return resultList;
+    }
+
+    private Frame getLabeledMarkerDataFromFrame(JsonObject frameJson) {
         if (markerLabels == null) {//only get labels once per file
             markerLabels = getMarkerLabels(frameJson);
         }
-        final ArrayList<Writable> result = new ArrayList<Writable>();
+        final ArrayList<Marker> result = new ArrayList<Marker>();
         for (String markerLabel : markerLabels) {
-            result.add(markerLabelingStrategy.getMarkerLabel(markerLabel));
-            result.add(new DoubleWritable(frameJson.get(markerLabel + "_x").getAsDouble()));
-            result.add(new DoubleWritable(frameJson.get(markerLabel + "_y").getAsDouble()));
-            result.add(new DoubleWritable(frameJson.get(markerLabel + "_z").getAsDouble()));
+            result.add(new Marker(markerLabelingStrategy.getMarkerLabel(markerLabel),
+                    new DoubleWritable(frameJson.get(markerLabel + "_x").getAsDouble()),
+                    new DoubleWritable(frameJson.get(markerLabel + "_y").getAsDouble()),
+                    new DoubleWritable(frameJson.get(markerLabel + "_z").getAsDouble())));
         }
-        return result;
+        return new Frame(result);
     }
 
     private Set<String> getMarkerLabels(JsonObject sampleObject) {
