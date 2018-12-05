@@ -1,4 +1,7 @@
-package preprocess_data;
+package preprocess_data.data_manipulator;
+
+import preprocess_data.data_model.Frame;
+import preprocess_data.data_model.Marker;
 
 import java.util.ArrayList;
 import java.util.Collections;

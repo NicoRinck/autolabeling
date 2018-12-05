@@ -1,4 +1,4 @@
-package preprocess_data;
+package preprocess_data.data_model;
 
 import org.datavec.api.writable.Writable;
 

@@ -1,4 +1,4 @@
-package preprocess_data;
+package preprocess_data.labeling;
 
 import org.datavec.api.writable.Writable;
 

@@ -1,4 +1,4 @@
-package preprocess_data;
+package datavec;
 
 import com.google.gson.JsonArray;
 import org.datavec.api.conf.Configuration;
@@ -8,6 +8,8 @@ import org.datavec.api.records.reader.BaseRecordReader;
 import org.datavec.api.split.FileSplit;
 import org.datavec.api.split.InputSplit;
 import org.datavec.api.writable.Writable;
+import preprocess_data.TrialDataManager;
+import preprocess_data.TrialFileIterator;
 
 import java.io.DataInputStream;
 import java.io.IOException;

@@ -1,5 +1,7 @@
 package preprocess_data;
 
+import preprocess_data.data_model.Frame;
+
 public class FrameDataNormalizer {
 
     private final MarkerNormalizationStrategy normalizationStrategy;
