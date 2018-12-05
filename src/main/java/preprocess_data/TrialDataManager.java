@@ -15,11 +15,11 @@ public class TrialDataManager {
 
     private Set<String> markerLabels;
     //TODO: Normalisierung? --> analog wie labels holen? Normalisation-Klasse, die eine Normaliserungsstrategie entgegennimmt.
-    private final MarkerLabelingStrategy markerLabelingStrategy;
+    private final MarkerLabelingStrategy labelingStrategy;
     private final FrameDataManipulator manipulator;
 
-    public TrialDataManager(MarkerLabelingStrategy markerLabelingStrategy, FrameDataManipulator manipulator) {
-        this.markerLabelingStrategy = markerLabelingStrategy;
+    public TrialDataManager(MarkerLabelingStrategy labelingStrategy, FrameDataManipulator manipulator) {
+        this.labelingStrategy = labelingStrategy;
         this.manipulator = manipulator;
     }
 
@@ -51,7 +51,7 @@ public class TrialDataManager {
         }
         final ArrayList<Marker> result = new ArrayList<Marker>();
         for (String markerLabel : markerLabels) {
-            result.add(new Marker(markerLabelingStrategy.getMarkerLabel(markerLabel),
+            result.add(new Marker(labelingStrategy.getMarkerLabel(markerLabel),
                     new DoubleWritable(frameJson.get(markerLabel + "_x").getAsDouble()),
                     new DoubleWritable(frameJson.get(markerLabel + "_y").getAsDouble()),
                     new DoubleWritable(frameJson.get(markerLabel + "_z").getAsDouble())));
