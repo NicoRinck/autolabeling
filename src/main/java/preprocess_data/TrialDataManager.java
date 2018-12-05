@@ -36,20 +36,6 @@ public class TrialDataManager {
         return resultList;
     }
 
-    //TODO: In Separate Klasse, die die Liste von Manipulators kapselt.
-    /*private ArrayList<ArrayList<Writable>> manipulateData(ArrayList<Writable> manipulationTarget) {
-        ArrayList<ArrayList<Writable>> resultList = new ArrayList<ArrayList<Writable>>();
-        resultList.add(manipulationTarget);
-        for (FrameDataManipulator manipulator : manipulator) {
-            ArrayList<ArrayList<Writable>> newResultList = new ArrayList<ArrayList<Writable>>();
-            for (ArrayList<Writable> writables : resultList) {
-                newResultList.addAll(manipulator.manipulateFrameData(writables));
-            }
-            resultList = newResultList;
-        }
-        return resultList;
-    }*/
-
     private ArrayList<Writable> getLabeledMarkerDataFromFrame(JsonObject frameJson) {
         if (markerLabels == null) {//only get labels once per file
             markerLabels = getMarkerLabels(frameJson);

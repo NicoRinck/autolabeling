@@ -15,6 +15,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class JsonRecordReader extends BaseRecordReader {
 
@@ -43,7 +44,14 @@ public class JsonRecordReader extends BaseRecordReader {
     }
 
     public List<Writable> next() {
-        return null;
+        if (fileContentIterator.hasNext()) {
+            return fileContentIterator.next();
+        } else if(fileIterator.hasNext()) {
+            fileContentIterator = trialDataManager.getTrialDataFromJson(fileIterator.next(), false).iterator();
+            return fileContentIterator.next();
+        } else {
+            throw new NoSuchElementException();
+        }
     }
 
     public boolean hasNext() {
