@@ -20,7 +20,7 @@ public class TestNN {
         FileSplit fileSplit = new FileSplit(file);
         try {
             jsonTrialRecordReader.initialize(fileSplit);
-            DataSetIterator dataSetIterator = new RecordReaderDataSetIterator.Builder(jsonTrialRecordReader,100).build();
+            DataSetIterator iterator = new RecordReaderDataSetIterator.Builder(jsonTrialRecordReader,100).build();
 
         } catch (IOException e) {
             e.printStackTrace();
