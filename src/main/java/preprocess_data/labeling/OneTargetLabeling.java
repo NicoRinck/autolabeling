@@ -3,11 +3,11 @@ package preprocess_data.labeling;
 import org.datavec.api.writable.IntWritable;
 import org.datavec.api.writable.Writable;
 
-public class OneTargetLabelingStrategy implements MarkerLabelingStrategy {
+public class OneTargetLabeling implements MarkerLabelingStrategy {
 
     private final String targetLabel;
 
-    public OneTargetLabelingStrategy(String targetLabel) {
+    public OneTargetLabeling(String targetLabel) {
         this.targetLabel = targetLabel;
     }
 

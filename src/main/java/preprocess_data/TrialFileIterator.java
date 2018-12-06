@@ -18,6 +18,7 @@ public class TrialFileIterator implements Iterator<JsonArray> {
     private static final String TRIAL_PROPERTY = "trial";
     private static final String FRAMES_PROPERTY = "frames";
 
+    //this iterator only accepts json files in a well defined structure
     public TrialFileIterator(FileSplit files) {
         this.files = files;
     }

@@ -1,7 +1,5 @@
 package preprocess_data.data_model;
 
-import org.datavec.api.writable.Writable;
-
 import java.util.ArrayList;
 
 public class Frame {
@@ -10,14 +8,6 @@ public class Frame {
 
     public Frame(ArrayList<Marker> markers) {
         this.markers = markers;
-    }
-
-    public ArrayList<Writable> getFrameAsWritables() {
-        final ArrayList<Writable> resultList = new ArrayList<Writable>();
-        for (Marker marker : markers) {
-            resultList.addAll(marker.getMarkerDataAsWritables());
-        }
-        return resultList;
     }
 
     public ArrayList<Marker> getMarkers() {

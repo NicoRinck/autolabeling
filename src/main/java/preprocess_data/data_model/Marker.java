@@ -19,12 +19,15 @@ public class Marker {
         this.z = z;
     }
 
-    public ArrayList<Writable> getMarkerDataAsWritables() {
+    public ArrayList<Writable> getCoordinates() {
         ArrayList<Writable> result = new ArrayList<Writable>();
-        result.add(label);
         result.add(x);
         result.add(y);
         result.add(z);
         return result;
+    }
+
+    public Writable getLabel() {
+        return label;
     }
 }

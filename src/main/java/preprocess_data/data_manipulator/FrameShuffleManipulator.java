@@ -6,7 +6,7 @@ import preprocess_data.data_model.Marker;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class FrameShuffleManipulator implements FrameDataManipulator {
+public class FrameShuffleManipulator implements FrameDataManipulationStrategy {
 
     private final int amountOfShuffles;
 

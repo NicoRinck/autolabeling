@@ -5,7 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.datavec.api.writable.DoubleWritable;
 import org.datavec.api.writable.Writable;
-import preprocess_data.data_manipulator.FrameDataManipulator;
+import preprocess_data.data_conversion.FrameDataConversionStrategy;
+import preprocess_data.data_manipulator.FrameDataManipulationStrategy;
 import preprocess_data.data_model.Frame;
 import preprocess_data.data_model.Marker;
 import preprocess_data.labeling.MarkerLabelingStrategy;
@@ -15,39 +16,35 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+//TODO: split into TrialDataJsonParser and TrialDataTransformation (Konvertierung und Manipulation?)
 public class TrialDataManager {
 
     private Set<String> markerLabels;
     //TODO: Normalisierung? --> analog wie labels holen? Normalisation-Klasse, die eine Normaliserungsstrategie entgegennimmt.
     private final MarkerLabelingStrategy labelingStrategy;
-    private final FrameDataManipulator manipulator;
+    private final FrameDataManipulationStrategy manipulator;
+    private final FrameDataConversionStrategy converter;
 
-    public TrialDataManager(MarkerLabelingStrategy labelingStrategy, FrameDataManipulator manipulator) {
+    public TrialDataManager(MarkerLabelingStrategy labelingStrategy, FrameDataManipulationStrategy manipulator, FrameDataConversionStrategy converter) {
         this.labelingStrategy = labelingStrategy;
         this.manipulator = manipulator;
+        this.converter = converter;
     }
 
     public ArrayList<ArrayList<Writable>> getTrialDataFromJson(JsonArray trialData) {
-        ArrayList<ArrayList<Writable>> resultList = new ArrayList<ArrayList<Writable>>();
-        for (JsonElement jsonElement : trialData) {
-            Frame frame = getLabeledMarkerDataFromFrame(jsonElement.getAsJsonObject());
+        /*for (JsonElement frameData : trialData) {
+            Frame frame = getLabeledMarkerDataFromFrame(frameData.getAsJsonObject());
             if (manipulator != null) {
                 ArrayList<Frame> manipulatedFrames = manipulator.manipulateFrame(frame);
-                resultList.addAll(getResultList(manipulatedFrames));
+                features.addAll(getResultList(manipulatedFrames));
             } else {
-                resultList.add(frame.getFrameAsWritables());
+                features.add(converter.convertFrameToWritables(frame));
             }
         }
-        return resultList;
+        return features.addAll(labels);*/
+        return null;
     }
 
-    private ArrayList<ArrayList<Writable>> getResultList(ArrayList<Frame> frames) {
-        ArrayList<ArrayList<Writable>> resultList = new ArrayList<ArrayList<Writable>>();
-        for (Frame frame : frames) {
-            resultList.add(frame.getFrameAsWritables());
-        }
-        return resultList;
-    }
 
     private Frame getLabeledMarkerDataFromFrame(JsonObject frameJson) {
         if (markerLabels == null) {//only get labels once per file
