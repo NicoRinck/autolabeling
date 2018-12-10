@@ -19,6 +19,12 @@ public class StandardFrameConverter implements FrameDataConversionStrategy {
         return featureList;
     }
 
+    public ArrayList<ArrayList<Writable>> convertFrameToListOfWritables(Frame frame) {
+        ArrayList<ArrayList<Writable>> resultList = new ArrayList<ArrayList<Writable>>();
+        resultList.add(convertFrameToWritables(frame));
+        return resultList;
+    }
+
     public ArrayList<ArrayList<Writable>> convertFramesToListOfWritables(ArrayList<Frame> frames) {
         ArrayList<ArrayList<Writable>> resultList = new ArrayList<ArrayList<Writable>>();
         for (Frame frame : frames) {

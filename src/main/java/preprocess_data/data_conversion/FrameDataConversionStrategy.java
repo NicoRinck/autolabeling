@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public interface FrameDataConversionStrategy {
 
     //convert a single Frame
-    ArrayList<Writable> convertFrameToWritables(Frame frame);
+    ArrayList<ArrayList<Writable>> convertFrameToListOfWritables(Frame frame);
 
     //convert multiple Frames (in case of data augmentation
     ArrayList<ArrayList<Writable>> convertFramesToListOfWritables(ArrayList<Frame> frames);

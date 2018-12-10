@@ -8,7 +8,7 @@ import org.datavec.api.records.reader.BaseRecordReader;
 import org.datavec.api.split.FileSplit;
 import org.datavec.api.split.InputSplit;
 import org.datavec.api.writable.Writable;
-import preprocess_data.TrialDataManager;
+import preprocess_data.TrialDataTransformation;
 import preprocess_data.TrialFileIterator;
 
 import java.io.DataInputStream;
@@ -21,12 +21,12 @@ import java.util.NoSuchElementException;
 
 public class JsonTrialRecordReader extends BaseRecordReader {
 
-    private final TrialDataManager trialDataManager;
+    private final TrialDataTransformation trialDataTransformation;
     private Iterator<JsonArray> fileIterator;
     private Iterator<ArrayList<Writable>> fileContentIterator;
 
-    public JsonTrialRecordReader(TrialDataManager trialDataManager) {
-        this.trialDataManager = trialDataManager;
+    public JsonTrialRecordReader(TrialDataTransformation trialDataTransformation) {
+        this.trialDataTransformation = trialDataTransformation;
     }
 
     //only accept File inputSplit
@@ -35,7 +35,7 @@ public class JsonTrialRecordReader extends BaseRecordReader {
             throw new IllegalArgumentException("JsonTrialRecordReader is for file Input only");
         }
         fileIterator = new TrialFileIterator((FileSplit) inputSplit);
-        fileContentIterator = trialDataManager.getTrialDataFromJson(fileIterator.next()).iterator();
+        fileContentIterator = trialDataTransformation.getTrialDataFromJson(fileIterator.next()).iterator();
     }
 
     public void initialize(Configuration configuration, InputSplit inputSplit) throws IOException, InterruptedException, IllegalArgumentException {
@@ -46,7 +46,7 @@ public class JsonTrialRecordReader extends BaseRecordReader {
         if (fileContentIterator.hasNext()) {
             return fileContentIterator.next();
         } else if(fileIterator.hasNext()) {
-            fileContentIterator = trialDataManager.getTrialDataFromJson(fileIterator.next()).iterator();
+            fileContentIterator = trialDataTransformation.getTrialDataFromJson(fileIterator.next()).iterator();
             return fileContentIterator.next();
         } else {
             throw new NoSuchElementException();
