@@ -8,6 +8,7 @@ import org.datavec.api.records.reader.BaseRecordReader;
 import org.datavec.api.split.FileSplit;
 import org.datavec.api.split.InputSplit;
 import org.datavec.api.writable.Writable;
+import preprocess_data.TrialDataManager;
 import preprocess_data.TrialDataTransformation;
 import preprocess_data.TrialFileIterator;
 
@@ -21,11 +22,11 @@ import java.util.NoSuchElementException;
 
 public class JsonTrialRecordReader extends BaseRecordReader {
 
-    private final TrialDataTransformation trialDataTransformation;
+    private final TrialDataManager trialDataTransformation;
     private Iterator<JsonArray> fileIterator;
     private Iterator<ArrayList<Writable>> fileContentIterator;
 
-    public JsonTrialRecordReader(TrialDataTransformation trialDataTransformation) {
+    public JsonTrialRecordReader(TrialDataManager trialDataTransformation) {
         this.trialDataTransformation = trialDataTransformation;
     }
 
