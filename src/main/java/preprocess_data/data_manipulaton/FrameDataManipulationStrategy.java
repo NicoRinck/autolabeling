@@ -1,4 +1,4 @@
-package preprocess_data.data_manipulator;
+package preprocess_data.data_manipulaton;
 
 import preprocess_data.data_model.Frame;
 

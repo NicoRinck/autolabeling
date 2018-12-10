@@ -2,7 +2,7 @@ package preprocess_data;
 
 import org.datavec.api.writable.Writable;
 import preprocess_data.data_conversion.FrameDataConversionStrategy;
-import preprocess_data.data_manipulator.FrameDataManipulationStrategy;
+import preprocess_data.data_manipulaton.FrameDataManipulationStrategy;
 import preprocess_data.data_model.Frame;
 
 import java.util.ArrayList;
