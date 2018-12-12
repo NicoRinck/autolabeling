@@ -1,16 +1,5 @@
 package deep_learning;
 
-import datavec.JsonTrialRecordReader;
-import org.datavec.api.split.FileSplit;
-import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
-import preprocess_data.TrialDataTransformation;
-import preprocess_data.data_manipulaton.FrameShuffleManipulator;
-import preprocess_data.labeling.OneTargetLabeling;
-
-import java.io.File;
-import java.io.IOException;
-
 public class TestNN {
 
     public static void main(String[] args) {
