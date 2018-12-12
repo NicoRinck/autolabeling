@@ -24,13 +24,9 @@ public class TrialDataTransformation {
         manipulator = null;
     }
 
-    private boolean hasManipulator() {
-        return manipulator != null;
-    }
-
     public ArrayList<ArrayList<Writable>> transformFrameData(Frame frame) {
-        if (hasManipulator()) {
-           return converter.convertFramesToListOfWritables(manipulator.manipulateFrame(frame));
+        if (manipulator != null) {
+            return converter.convertFramesToListOfWritables(manipulator.manipulateFrame(frame));
         }
         return converter.convertFrameToListOfWritables(frame);
     }
