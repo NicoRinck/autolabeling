@@ -2,8 +2,6 @@ package deep_learning;
 
 import datavec.JsonTrialRecordReader;
 import org.datavec.api.split.FileSplit;
-import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import preprocess_data.JsonToTrialParser;
 import preprocess_data.TrialDataManager;
 import preprocess_data.TrialDataTransformation;
