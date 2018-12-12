@@ -19,17 +19,12 @@ public class TrialDataTransformation {
         this.manipulator = manipulator;
     }
 
-    public TrialDataTransformation(FrameDataConversionStrategy converter) {
-        this.converter = converter;
-        manipulator = null;
-    }
-
     private boolean hasManipulator() {
         return manipulator != null;
     }
 
     public ArrayList<ArrayList<Writable>> transformFrameData(Frame frame) {
-        if (hasManipulator()) {
+        if (manipulator != null) {
            return converter.convertFramesToListOfWritables(manipulator.manipulateFrame(frame));
         }
         return converter.convertFrameToListOfWritables(frame);
