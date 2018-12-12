@@ -20,8 +20,7 @@ public class TrialDataManager {
     public ArrayList<ArrayList<Writable>> getTrialDataFromJson(JsonArray trialData) {
         ArrayList<ArrayList<Writable>> resultList = new ArrayList<ArrayList<Writable>>();
         for (JsonElement trialDatum : trialData) {
-            ArrayList<Frame> frames = new ArrayList<Frame>();
-            Frame frame = jsonToTrialParser.getLabeledFrameFromJson(trialData.getAsJsonObject());
+            Frame frame = jsonToTrialParser.getLabeledFrameFromJson(trialDatum.getAsJsonObject());
             resultList.addAll(dataTransformer.transformFrameData(frame));
         }
         return resultList;
