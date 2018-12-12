@@ -12,7 +12,7 @@ public class TestNN {
             jsonTrialRecordReader.initialize(fileSplit);
             DataSetIterator iterator = new RecordReaderDataSetIterator.Builder(jsonTrialRecordReader,100).build();
 
-        } catch (IOException e) {
+        } catch (IOExcecption e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
