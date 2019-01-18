@@ -29,4 +29,8 @@ public class TrialDataTransformation {
         }
         return converter.convertFrameToListOfWritables(frame);
     }
+
+    public FrameConverter getConverter() {
+        return converter;
+    }
 }

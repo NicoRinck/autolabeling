@@ -6,6 +6,7 @@ import org.datavec.api.writable.Writable;
 import preprocess_data.data_model.Frame;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TrialDataManager {
 
@@ -24,5 +25,9 @@ public class TrialDataManager {
             resultList.addAll(dataTransformer.transformFrameData(frame));
         }
         return resultList;
+    }
+
+    public TrialDataTransformation getDataTransformer() {
+        return dataTransformer;
     }
 }

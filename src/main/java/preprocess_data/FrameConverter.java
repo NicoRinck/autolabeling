@@ -28,4 +28,8 @@ public class FrameConverter {
         }
         return resultList;
     }
+
+    public FrameLabelingStrategy getFrameLabelingStrategy() {
+        return frameLabelingStrategy;
+    }
 }

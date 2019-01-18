@@ -59,7 +59,7 @@ public class JsonTrialRecordReader extends BaseRecordReader {
     }
 
     public List<String> getLabels() {
-        return null;
+        return trialDataManager.getDataTransformer().getConverter().getFrameLabelingStrategy().getLabels();
     }
 
     public void reset() {

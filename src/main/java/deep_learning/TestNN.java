@@ -2,6 +2,8 @@ package deep_learning;
 
 import datavec.JsonTrialRecordReader;
 import org.datavec.api.split.FileSplit;
+import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
+import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import preprocess_data.JsonToTrialParser;
 import preprocess_data.TrialDataManager;
 import preprocess_data.TrialDataTransformation;
@@ -21,7 +23,7 @@ public class TestNN {
         File file = new File("C:\\Users\\nico.rinck\\Desktop\\stack1\\01_SS_O1_S1_AR.json");
         FileSplit fileSplit = new FileSplit(file);
 
-        FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("RASI");
+        FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("RASI", 35);
         JsonToTrialParser jsonToTrialParser = new JsonToTrialParser();
 
         FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(5);
@@ -35,7 +37,9 @@ public class TestNN {
             while (jsonTrialRecordReader.hasNext()) {
                 System.out.println(jsonTrialRecordReader.next());
             }
-            /*DataSetIterator iterator = new RecordReaderDataSetIterator.Builder(jsonTrialRecordReader,10)*/
+            //more is not needed. datavec assumes the last index of the data-array (record) as label.
+            //To get output-labels of the NN the method RecordReader.getLabels() has to be implemented!
+            DataSetIterator dataSetIterator = new RecordReaderDataSetIterator(jsonTrialRecordReader,10);
 
         } catch (IOException e) {
             e.printStackTrace();
