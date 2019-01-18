@@ -2,16 +2,12 @@ package deep_learning;
 
 import datavec.JsonTrialRecordReader;
 import org.datavec.api.split.FileSplit;
-import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import preprocess_data.JsonToTrialParser;
 import preprocess_data.TrialDataManager;
 import preprocess_data.TrialDataTransformation;
-import preprocess_data.data_conversion.FrameDataConversionStrategy;
-import preprocess_data.data_conversion.StandardFrameConverter;
 import preprocess_data.data_manipulaton.FrameDataManipulationStrategy;
 import preprocess_data.data_manipulaton.FrameShuffleManipulator;
-import preprocess_data.labeling.MarkerLabelingStrategy;
+import preprocess_data.labeling.FrameLabelingStrategy;
 import preprocess_data.labeling.OneTargetLabeling;
 
 import java.io.File;
@@ -25,12 +21,11 @@ public class TestNN {
         File file = new File("C:\\Users\\nico.rinck\\Desktop\\stack1\\01_SS_O1_S1_AR.json");
         FileSplit fileSplit = new FileSplit(file);
 
-        MarkerLabelingStrategy markerLabelingStrategy = new OneTargetLabeling("RASI");
-        JsonToTrialParser jsonToTrialParser = new JsonToTrialParser(markerLabelingStrategy);
+        FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("RASI");
+        JsonToTrialParser jsonToTrialParser = new JsonToTrialParser();
 
-        FrameDataConversionStrategy conversionStrategy = new StandardFrameConverter();
         FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(5);
-        TrialDataTransformation transformation = new TrialDataTransformation(conversionStrategy,manipulationStrategy);
+        TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy,manipulationStrategy);
 
         TrialDataManager trialDataManager = new TrialDataManager(transformation,jsonToTrialParser);
         JsonTrialRecordReader jsonTrialRecordReader = new JsonTrialRecordReader(trialDataManager);

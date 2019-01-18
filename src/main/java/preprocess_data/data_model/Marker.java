@@ -1,33 +1,36 @@
 package preprocess_data.data_model;
 
-import org.datavec.api.writable.DoubleWritable;
 import org.datavec.api.writable.Writable;
 
 import java.util.ArrayList;
 
 public class Marker {
 
-    private final Writable label;
-    private final DoubleWritable x;
-    private final DoubleWritable y;
-    private final DoubleWritable z;
+    private final String label;
+    private final double x;
+    private final double y;
+    private final double z;
 
-    public Marker(Writable label, DoubleWritable x, DoubleWritable y, DoubleWritable z) {
+    public Marker(String label, double x, double y, double z) {
         this.label = label;
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    public ArrayList<Writable> getCoordinates() {
-        ArrayList<Writable> result = new ArrayList<Writable>();
-        result.add(x);
-        result.add(y);
-        result.add(z);
-        return result;
+    public double getX() {
+        return x;
     }
 
-    public Writable getLabel() {
+    public double getY() {
+        return y;
+    }
+
+    public double getZ() {
+        return z;
+    }
+
+    public String getLabel() {
         return label;
     }
 }
