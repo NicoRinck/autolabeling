@@ -7,8 +7,6 @@ import preprocess_data.data_model.Frame;
 
 import java.util.ArrayList;
 
-//TODO: split into JsonToTrialParser and TrialDataTransformation (Konvertierung und Manipulation?)
-//Convert Data to Datavec-Format
 public class TrialDataTransformation {
 
     private final FrameDataManipulationStrategy manipulator;

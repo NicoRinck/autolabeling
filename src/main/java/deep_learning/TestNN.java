@@ -2,6 +2,8 @@ package deep_learning;
 
 import datavec.JsonTrialRecordReader;
 import org.datavec.api.split.FileSplit;
+import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
+import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import preprocess_data.JsonToTrialParser;
 import preprocess_data.TrialDataManager;
 import preprocess_data.TrialDataTransformation;
@@ -20,7 +22,7 @@ public class TestNN {
     public static void main(String[] args) {
 
         //Input Data
-        File file = new File("C:\\Users\\Nico Rinck\\IdeaProjects\\autolabeling\\src\\main\\resources\\01_SS_O1_S1_Abd-TEST.json");
+        File file = new File("C:\\Users\\nico.rinck\\Desktop\\stack1\\01_SS_O1_S1_AR.json");
         FileSplit fileSplit = new FileSplit(file);
 
         MarkerLabelingStrategy markerLabelingStrategy = new OneTargetLabeling("RASI");
@@ -38,7 +40,7 @@ public class TestNN {
             while (jsonTrialRecordReader.hasNext()) {
                 System.out.println(jsonTrialRecordReader.next());
             }
-            /*DataSetIterator iterator = new RecordReaderDataSetIterator.Builder(jsonTrialRecordReader,100).build();*/
+            /*DataSetIterator iterator = new RecordReaderDataSetIterator.Builder(jsonTrialRecordReader,10)*/
 
         } catch (IOException e) {
             e.printStackTrace();

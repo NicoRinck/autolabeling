@@ -9,7 +9,6 @@ import org.datavec.api.split.FileSplit;
 import org.datavec.api.split.InputSplit;
 import org.datavec.api.writable.Writable;
 import preprocess_data.TrialDataManager;
-import preprocess_data.TrialDataTransformation;
 import preprocess_data.TrialFileIterator;
 
 import java.io.DataInputStream;
@@ -22,21 +21,21 @@ import java.util.NoSuchElementException;
 
 public class JsonTrialRecordReader extends BaseRecordReader {
 
-    private final TrialDataManager trialDataTransformation;
+    private final TrialDataManager trialDataManager;
     private Iterator<JsonArray> fileIterator;
     private Iterator<ArrayList<Writable>> fileContentIterator;
 
-    public JsonTrialRecordReader(TrialDataManager trialDataTransformation) {
-        this.trialDataTransformation = trialDataTransformation;
+    public JsonTrialRecordReader(TrialDataManager trialDataManager) {
+        this.trialDataManager = trialDataManager;
     }
 
     //only accept File inputSplit
     public void initialize(InputSplit inputSplit) throws IOException, InterruptedException, IllegalArgumentException {
         if (!(inputSplit instanceof FileSplit)) {
-            throw new IllegalArgumentException("JsonTrialRecordReader is for file Input only");
+            throw new IllegalArgumentException("JsonTrialRecordReader is for file input only");
         }
         fileIterator = new TrialFileIterator((FileSplit) inputSplit);
-        fileContentIterator = trialDataTransformation.getTrialDataFromJson(fileIterator.next()).iterator();
+        fileContentIterator = trialDataManager.getTrialDataFromJson(fileIterator.next()).iterator();
     }
 
     public void initialize(Configuration configuration, InputSplit inputSplit) throws IOException, InterruptedException, IllegalArgumentException {
@@ -47,7 +46,7 @@ public class JsonTrialRecordReader extends BaseRecordReader {
         if (fileContentIterator.hasNext()) {
             return fileContentIterator.next();
         } else if(fileIterator.hasNext()) {
-            fileContentIterator = trialDataTransformation.getTrialDataFromJson(fileIterator.next()).iterator();
+            fileContentIterator = trialDataManager.getTrialDataFromJson(fileIterator.next()).iterator();
             return fileContentIterator.next();
         } else {
             throw new NoSuchElementException();
