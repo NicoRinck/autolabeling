@@ -19,6 +19,11 @@ public class OneTargetLabeling implements FrameLabelingStrategy {
         this.amountOfLabels = amountOfLabels;
     }
 
+    public OneTargetLabeling(String targetLabel) {
+        this.targetLabel = targetLabel;
+        this.amountOfLabels = -1;
+    }
+
     public ArrayList<Writable> getLabeledWritableList(Frame frame) {
         int indexOfTarget = -1;
         final ArrayList<Writable> resultList = new ArrayList<Writable>();
@@ -36,11 +41,13 @@ public class OneTargetLabeling implements FrameLabelingStrategy {
     }
 
     public List<String> getLabels() {
-        ArrayList<String> resultList = new ArrayList<String>();
-        for (int i = 0; i < amountOfLabels; i++) {
-            resultList.add(i + "");
+        if (amountOfLabels > 0) {
+            ArrayList<String> resultList = new ArrayList<String>();
+            for (int i = 0; i < amountOfLabels; i++) {
+                resultList.add(i + "");
+            }
+            return resultList;
         }
-        return resultList;
+        return null;
     }
-
 }

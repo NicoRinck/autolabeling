@@ -2,8 +2,6 @@ package preprocess_data;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.datavec.api.writable.DoubleWritable;
-import org.datavec.api.writable.Text;
 import org.jetbrains.annotations.NotNull;
 import preprocess_data.data_model.Frame;
 import preprocess_data.data_model.Marker;
@@ -17,7 +15,7 @@ public class JsonToTrialParser {
 
     private Set<String> markerLabels;
 
-    public Frame getFrameFromJson(JsonObject frameJson) {
+    Frame getFrameFromJson(JsonObject frameJson) {
         //only get labels once per file
         if (markerLabels == null) {
             markerLabels = getMarkerLabels(frameJson);
@@ -32,7 +30,7 @@ public class JsonToTrialParser {
         return new Frame(result);
     }
 
-    private Set<String> getMarkerLabels(@NotNull JsonObject sampleObject) {
+    public Set<String> getMarkerLabels(@NotNull JsonObject sampleObject) {
         Set<String> labels = new TreeSet<String>();
         for (Map.Entry<String, JsonElement> jsonPropertyEntry : sampleObject.entrySet()) {
             int indexOfSeparator = jsonPropertyEntry.getKey().indexOf("_");
