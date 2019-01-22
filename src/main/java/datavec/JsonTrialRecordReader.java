@@ -55,7 +55,6 @@ public class JsonTrialRecordReader extends BaseRecordReader {
 
     public boolean hasNext() {
         return !(!fileIterator.hasNext() && !fileContentIterator.hasNext());
-
     }
 
     public List<String> getLabels() {

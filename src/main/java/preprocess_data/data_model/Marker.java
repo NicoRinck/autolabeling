@@ -1,9 +1,5 @@
 package preprocess_data.data_model;
 
-import org.datavec.api.writable.Writable;
-
-import java.util.ArrayList;
-
 public class Marker {
 
     private final String label;

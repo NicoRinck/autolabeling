@@ -2,6 +2,7 @@ package preprocess_data.labeling;
 
 import org.datavec.api.writable.DoubleWritable;
 import org.datavec.api.writable.IntWritable;
+import org.datavec.api.writable.Text;
 import org.datavec.api.writable.Writable;
 import preprocess_data.data_model.Frame;
 import preprocess_data.data_model.Marker;
@@ -36,7 +37,7 @@ public class OneTargetLabeling implements FrameLabelingStrategy {
                 indexOfTarget = i;
             }
         }
-        resultList.add(new IntWritable(indexOfTarget));
+        resultList.add(new Text(indexOfTarget+""));
         return resultList;
     }
 
