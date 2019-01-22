@@ -62,7 +62,6 @@ public class JsonTrialRecordReader extends BaseRecordReader {
     }
 
     public void reset() {
-
     }
 
     public boolean resetSupported() {
@@ -73,8 +72,11 @@ public class JsonTrialRecordReader extends BaseRecordReader {
         return null;
     }
 
+    //TODO!
     public Record nextRecord() {
-        return null;
+        List<Writable> next = next();
+        //metadata --> fileIndex/location (get from TrialFileIterator). Closer look: https://github.com/deeplearning4j/DataVec/blob/master/datavec-api/src/main/java/org/datavec/api/records/reader/impl/csv/CSVRecordReader.java
+        return new org.datavec.api.records.impl.Record(next,null); //quick fix
     }
 
     public Record loadFromMetaData(RecordMetaData recordMetaData) throws IOException {
