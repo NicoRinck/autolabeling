@@ -8,8 +8,12 @@ import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.nn.weights.WeightInit;
 import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.linalg.activations.Activation;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.dataset.api.DataSet;
+import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import preprocess_data.EuclideanDistanceNormalizer;
 import preprocess_data.JsonToTrialParser;
@@ -61,26 +65,38 @@ public class TestNN {
 
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
                 .seed(seed)
-                .activation(Activation.SIGMOID)
+                .updater(new Nesterovs(0.05, 0.9))
                 .list()
-                .layer(new DenseLayer.Builder().nIn(numInputs).nOut(53).build())
-                .layer(new DenseLayer.Builder().nIn(53).nOut(33).build())
-                .layer(new OutputLayer.Builder(LossFunctions.LossFunction.SQUARED_LOSS).activation(Activation.SIGMOID).nIn(33).nOut(outputNum).build())
+                .layer(new DenseLayer.Builder().nIn(numInputs).nOut(53).weightInit(WeightInit.XAVIER).activation(Activation.RELU).build())
+                .layer(new DenseLayer.Builder().nIn(53).nOut(33).weightInit(WeightInit.XAVIER).activation(Activation.SIGMOID).build())
+                .layer(new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD).weightInit(WeightInit.XAVIER).activation(Activation.SOFTMAX).nIn(33).nOut(outputNum).build())
                 .build();
 
         MultiLayerNetwork nn = new MultiLayerNetwork(conf);
         nn.init();
 
+        DataSet dataSet = trainDataIterator.next();
+        System.out.println(dataSet.getFeatures());
+        System.out.println(dataSet.getLabels());
+
         //Training
-        int epochs = 10;
+        int epochs = 50;
         for (int i = 0; i < epochs; i++) {
             nn.fit(trainDataIterator);
         }
 
         //Evaluation
-        Evaluation evaluation = nn.evaluate(testDataIterator);
-        System.out.println(evaluation.stats());
-        System.out.println(evaluation.confusionToString());
+        System.out.println("start evaluation");
+        Evaluation eval = new Evaluation(35);
+        while(testDataIterator.hasNext()) {
+            DataSet t = testDataIterator.next();
+            INDArray features = t.getFeatures();
+            INDArray labels = t.getLabels();
+            INDArray predicted = nn.output(features,false);
+            eval.eval(labels,predicted);
+        }
+
+        System.out.println(eval.stats());
 
        /* Evaluation evaluation = new Evaluation();
         INDArray output = nn.output();
