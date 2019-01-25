@@ -29,4 +29,9 @@ public class Marker {
     public String getLabel() {
         return label;
     }
+
+    @Override
+    public String toString() {
+        return "label: " + label + " x: " + x + " y: " + y + " z: " + z;
+    }
 }

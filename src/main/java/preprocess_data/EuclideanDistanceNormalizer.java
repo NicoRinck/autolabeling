@@ -5,7 +5,7 @@ import preprocess_data.data_model.Marker;
 
 import java.util.ArrayList;
 
-public class EuklidDistanceNormalizer implements FrameNormalizationStrategy {
+public class EuclideanDistanceNormalizer implements FrameNormalizationStrategy {
 
     public Frame normalizeMarker(final Frame frame) {
         final ArrayList<Marker> normalizedMarkers = new ArrayList<Marker>();
@@ -25,7 +25,7 @@ public class EuklidDistanceNormalizer implements FrameNormalizationStrategy {
     }
 
     private double getEuclideanDistance(final Marker marker) {
-        return Math.sqrt(getSquareOf(marker.getX()) * getSquareOf(marker.getY()) * getSquareOf(marker.getZ()));
+        return Math.sqrt(getSquareOf(marker.getX()) + getSquareOf(marker.getY()) + getSquareOf(marker.getZ()));
     }
 
     private double getSquareOf(final double d) {

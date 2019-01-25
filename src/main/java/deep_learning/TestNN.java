@@ -2,19 +2,7 @@ package deep_learning;
 
 import datavec.JsonTrialRecordReader;
 import org.datavec.api.split.FileSplit;
-import org.datavec.api.writable.Writable;
-import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
-import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
-import org.deeplearning4j.nn.conf.layers.DenseLayer;
-import org.deeplearning4j.nn.conf.layers.OutputLayer;
-import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
-import org.nd4j.evaluation.classification.Evaluation;
-import org.nd4j.linalg.activations.Activation;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.dataset.SplitTestAndTrain;
-import org.nd4j.linalg.dataset.api.DataSet;
-import org.nd4j.linalg.lossfunctions.LossFunctions;
+import preprocess_data.EuclideanDistanceNormalizer;
 import preprocess_data.JsonToTrialParser;
 import preprocess_data.TrialDataManager;
 import preprocess_data.TrialDataTransformation;
@@ -24,29 +12,33 @@ import preprocess_data.labeling.FrameLabelingStrategy;
 import preprocess_data.labeling.OneTargetLabeling;
 
 import java.io.File;
-import java.util.List;
 
 public class TestNN {
 
     public static void main(String[] args) throws Exception {
 
         //Input Data
-        File file = new File("C:\\Users\\nico.rinck\\Desktop\\stack1\\01_SS_O1_S1_AR.json");
+        File file = new File("C:\\Users\\nico.rinck\\Desktop\\Daten_Studienarbeit\\ABD\\01_SS_O1_S1_Abd.json");
         FileSplit fileSplit = new FileSplit(file);
 
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("RASI", 35);
         JsonToTrialParser jsonToTrialParser = new JsonToTrialParser();
 
+        EuclideanDistanceNormalizer euclideanDistanceNormalizer = new EuclideanDistanceNormalizer();
         FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(5);
-        TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy,manipulationStrategy);
+        TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy,manipulationStrategy, euclideanDistanceNormalizer);
 
         TrialDataManager trialDataManager = new TrialDataManager(transformation,jsonToTrialParser);
         JsonTrialRecordReader jsonTrialRecordReader = new JsonTrialRecordReader(trialDataManager);
         jsonTrialRecordReader.initialize(fileSplit);
 
+        while(jsonTrialRecordReader.hasNext()) {
+            System.out.println(jsonTrialRecordReader.next());
+        }
+
         //more is not needed. datavec assumes the last index of the data-array (record) as label.
         //To get output-labels of the NN the method RecordReader.getLabels() has to be implemented!
-        RecordReaderDataSetIterator dataSetIterator = new RecordReaderDataSetIterator(jsonTrialRecordReader,10);
+        /*RecordReaderDataSetIterator dataSetIterator = new RecordReaderDataSetIterator(jsonTrialRecordReader,10);
 
         final int numInputs = 105;
         final int outputNum = 35;
@@ -86,6 +78,6 @@ public class TestNN {
         INDArray output = nn.output(testData.getFeatures());
         System.out.println("Output: " + output);
         evaluation.eval(testData.getLabels(), output);
-        System.out.println(evaluation.stats());
+        System.out.println(evaluation.stats());*/
     }
 }
