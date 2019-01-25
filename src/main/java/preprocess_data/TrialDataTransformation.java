@@ -23,7 +23,7 @@ public class TrialDataTransformation {
         manipulator = null;
     }
 
-    public ArrayList<ArrayList<Writable>> transformFrameData(Frame frame) {
+    ArrayList<ArrayList<Writable>> transformFrameData(Frame frame) {
         if (manipulator != null) {
             return converter.convertFramesToListOfWritables(manipulator.manipulateFrame(frame));
         }

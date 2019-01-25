@@ -1,7 +1,6 @@
 package deep_learning;
 
 import datavec.JsonTrialRecordReader;
-import javafx.scene.chart.PieChart;
 import org.datavec.api.split.FileSplit;
 import org.datavec.api.writable.Writable;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
@@ -44,7 +43,6 @@ public class TestNN {
         TrialDataManager trialDataManager = new TrialDataManager(transformation,jsonToTrialParser);
         JsonTrialRecordReader jsonTrialRecordReader = new JsonTrialRecordReader(trialDataManager);
         jsonTrialRecordReader.initialize(fileSplit);
-
 
         //more is not needed. datavec assumes the last index of the data-array (record) as label.
         //To get output-labels of the NN the method RecordReader.getLabels() has to be implemented!
