@@ -2,6 +2,15 @@ package deep_learning;
 
 import datavec.JsonTrialRecordReader;
 import org.datavec.api.split.FileSplit;
+import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
+import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
+import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
+import org.deeplearning4j.nn.conf.layers.DenseLayer;
+import org.deeplearning4j.nn.conf.layers.OutputLayer;
+import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.nd4j.evaluation.classification.Evaluation;
+import org.nd4j.linalg.activations.Activation;
+import org.nd4j.linalg.lossfunctions.LossFunctions;
 import preprocess_data.EuclideanDistanceNormalizer;
 import preprocess_data.JsonToTrialParser;
 import preprocess_data.TrialDataManager;
@@ -18,28 +27,34 @@ public class TestNN {
     public static void main(String[] args) throws Exception {
 
         //Input Data
-        File file = new File("C:\\Users\\nico.rinck\\Desktop\\Daten_Studienarbeit\\ABD\\01_SS_O1_S1_Abd.json");
-        FileSplit fileSplit = new FileSplit(file);
+        File trainDirectory = new File("C:\\Users\\nico.rinck\\Desktop\\Daten_Studienarbeit\\ABD_train");
+        FileSplit fileSplitTrain = new FileSplit(trainDirectory);
 
+        //Test Data
+        File file = new File("C:\\Users\\nico.rinck\\Desktop\\Daten_Studienarbeit\\ABD_test");
+        FileSplit fileSplitTest = new FileSplit(file);
+
+        //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("RASI", 35);
-        JsonToTrialParser jsonToTrialParser = new JsonToTrialParser();
-
         EuclideanDistanceNormalizer euclideanDistanceNormalizer = new EuclideanDistanceNormalizer();
         FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(5);
+        JsonToTrialParser jsonToTrialParser = new JsonToTrialParser();
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy,manipulationStrategy, euclideanDistanceNormalizer);
-
         TrialDataManager trialDataManager = new TrialDataManager(transformation,jsonToTrialParser);
-        JsonTrialRecordReader jsonTrialRecordReader = new JsonTrialRecordReader(trialDataManager);
-        jsonTrialRecordReader.initialize(fileSplit);
 
-        while(jsonTrialRecordReader.hasNext()) {
-            System.out.println(jsonTrialRecordReader.next());
-        }
+
+        //DataSet Iterators
+        JsonTrialRecordReader trainDataReader = new JsonTrialRecordReader(trialDataManager);
+        trainDataReader.initialize(fileSplitTrain);
+        JsonTrialRecordReader testDataReader = new JsonTrialRecordReader(trialDataManager);
+        testDataReader.initialize(fileSplitTest);
 
         //more is not needed. datavec assumes the last index of the data-array (record) as label.
         //To get output-labels of the NN the method RecordReader.getLabels() has to be implemented!
-        /*RecordReaderDataSetIterator dataSetIterator = new RecordReaderDataSetIterator(jsonTrialRecordReader,10);
+        RecordReaderDataSetIterator trainDataIterator = new RecordReaderDataSetIterator(trainDataReader,10);
+        RecordReaderDataSetIterator testDataIterator = new RecordReaderDataSetIterator(testDataReader,10);
 
+        //NN Config
         final int numInputs = 105;
         final int outputNum = 35;
         final long seed = 6;
@@ -56,26 +71,19 @@ public class TestNN {
         MultiLayerNetwork nn = new MultiLayerNetwork(conf);
         nn.init();
 
-        List<Writable> writable = jsonTrialRecordReader.next();
-        Writable label = writable.get(105);
-
-        DataSet allData = dataSetIterator.next();
-        SplitTestAndTrain testAndTrain = allData.splitTestAndTrain(0.8);
-
-        DataSet trainingData = testAndTrain.getTrain();
-        DataSet testData = testAndTrain.getTest();
-
-        System.out.println("TRAINING: " + trainingData);
-        System.out.println(trainingData);
-        System.out.println("TEST:     " + testData);
-        System.out.println(testData);
-
-        for (int i = 0; i < 10; i++) {
-            nn.fit(trainingData);
+        //Training
+        int epochs = 10;
+        for (int i = 0; i < epochs; i++) {
+            nn.fit(trainDataIterator);
         }
 
-        Evaluation evaluation = new Evaluation();
-        INDArray output = nn.output(testData.getFeatures());
+        //Evaluation
+        Evaluation evaluation = nn.evaluate(testDataIterator);
+        System.out.println(evaluation.stats());
+        System.out.println(evaluation.confusionToString());
+
+       /* Evaluation evaluation = new Evaluation();
+        INDArray output = nn.output();
         System.out.println("Output: " + output);
         evaluation.eval(testData.getLabels(), output);
         System.out.println(evaluation.stats());*/

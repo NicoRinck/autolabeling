@@ -30,6 +30,7 @@ public class TrialFileIterator implements Iterator<JsonArray> {
     public JsonArray next(){
         if (hasNext()) {
             try {
+                System.out.println("current file: " + files.locations()[currentIndex]);
                 InputStream inputStream = files.openInputStreamFor(files.locations()[currentIndex++].toString());
                 JsonArray result = getFramesArray(inputStream);
                 if (result != null) { //If Json is invalid, no result is returned
