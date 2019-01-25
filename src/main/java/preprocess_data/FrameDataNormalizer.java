@@ -4,9 +4,9 @@ import preprocess_data.data_model.Frame;
 
 public class FrameDataNormalizer {
 
-    private final MarkerNormalizationStrategy normalizationStrategy;
+    private final FrameNormalizationStrategy normalizationStrategy;
 
-    public FrameDataNormalizer(MarkerNormalizationStrategy normalizationStrategy) {
+    public FrameDataNormalizer(FrameNormalizationStrategy normalizationStrategy) {
         this.normalizationStrategy = normalizationStrategy;
     }
 
