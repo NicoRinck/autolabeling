@@ -30,13 +30,14 @@ public class TestNN {
 
     public static void main(String[] args) throws Exception {
 
+        String[] allowedFileFormat = {"json"};
         //Input Data
-        File trainDirectory = new File("C:\\Users\\nico.rinck\\Desktop\\Daten_Studienarbeit\\ABD_train");
-        FileSplit fileSplitTrain = new FileSplit(trainDirectory);
+        File trainDirectory = new File("C:\\Users\\nicor\\Desktop\\Daten_Studienarbeit\\ABD_train");
+        FileSplit fileSplitTrain = new FileSplit(trainDirectory, allowedFileFormat);
 
         //Test Data
-        File file = new File("C:\\Users\\nico.rinck\\Desktop\\Daten_Studienarbeit\\ABD_test");
-        FileSplit fileSplitTest = new FileSplit(file);
+        File file = new File("C:\\Users\\nicor\\Desktop\\Daten_Studienarbeit\\ABD_test");
+        FileSplit fileSplitTest = new FileSplit(file, allowedFileFormat);
 
         //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("RASI", 35);
@@ -45,7 +46,6 @@ public class TestNN {
         JsonToTrialParser jsonToTrialParser = new JsonToTrialParser();
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy,manipulationStrategy, euclideanDistanceNormalizer);
         TrialDataManager trialDataManager = new TrialDataManager(transformation,jsonToTrialParser);
-
 
         //DataSet Iterators
         JsonTrialRecordReader trainDataReader = new JsonTrialRecordReader(trialDataManager);
@@ -92,7 +92,7 @@ public class TestNN {
             DataSet t = testDataIterator.next();
             INDArray features = t.getFeatures();
             INDArray labels = t.getLabels();
-            INDArray predicted = nn.output(features,false);
+            INDArray predicted = nn.output(features);
             eval.eval(labels,predicted);
         }
 
