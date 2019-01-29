@@ -24,6 +24,7 @@ public class JsonTrialRecordReader extends BaseRecordReader {
     private final TrialDataManager trialDataManager;
     private Iterator<JsonArray> fileIterator;
     private Iterator<ArrayList<Writable>> fileContentIterator;
+    private FileSplit fileSplit;
 
     public JsonTrialRecordReader(TrialDataManager trialDataManager) {
         this.trialDataManager = trialDataManager;
@@ -34,7 +35,12 @@ public class JsonTrialRecordReader extends BaseRecordReader {
         if (!(inputSplit instanceof FileSplit)) {
             throw new IllegalArgumentException("JsonTrialRecordReader is for file input only");
         }
-        fileIterator = new TrialFileIterator((FileSplit) inputSplit);
+        this.fileSplit = (FileSplit) inputSplit;
+        initIterators(fileSplit);
+    }
+
+    private void initIterators(final FileSplit fileSplit) {
+        fileIterator = new TrialFileIterator(fileSplit);
         fileContentIterator = trialDataManager.getTrialDataFromJson(fileIterator.next()).iterator();
     }
 
@@ -45,10 +51,12 @@ public class JsonTrialRecordReader extends BaseRecordReader {
     public List<Writable> next() {
         if (fileContentIterator.hasNext()) {
             return fileContentIterator.next();
-        } else if(fileIterator.hasNext()) {
+        }
+        else if (fileIterator.hasNext()) {
             fileContentIterator = trialDataManager.getTrialDataFromJson(fileIterator.next()).iterator();
             return fileContentIterator.next();
-        } else {
+        }
+        else {
             throw new NoSuchElementException();
         }
     }
@@ -62,10 +70,11 @@ public class JsonTrialRecordReader extends BaseRecordReader {
     }
 
     public void reset() {
+        initIterators(fileSplit);
     }
 
     public boolean resetSupported() {
-        return false;
+        return true;
     }
 
     public List<Writable> record(URI uri, DataInputStream dataInputStream) throws IOException {
@@ -76,7 +85,7 @@ public class JsonTrialRecordReader extends BaseRecordReader {
     public Record nextRecord() {
         List<Writable> next = next();
         //metadata --> fileIndex/location (get from TrialFileIterator). Closer look: https://github.com/deeplearning4j/DataVec/blob/master/datavec-api/src/main/java/org/datavec/api/records/reader/impl/csv/CSVRecordReader.java
-        return new org.datavec.api.records.impl.Record(next,null); //quick fix
+        return new org.datavec.api.records.impl.Record(next, null); //quick fix
     }
 
     public Record loadFromMetaData(RecordMetaData recordMetaData) throws IOException {
