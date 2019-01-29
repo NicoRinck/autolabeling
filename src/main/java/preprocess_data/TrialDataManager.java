@@ -20,10 +20,14 @@ public class TrialDataManager {
 
     public ArrayList<ArrayList<Writable>> getTrialDataFromJson(JsonArray trialData) {
         final ArrayList<ArrayList<Writable>> resultList = new ArrayList<ArrayList<Writable>>();
+        int frameSize = 0;
         for (JsonElement trialDatum : trialData) {
             Frame frame = jsonToTrialParser.getFrameFromJson(trialDatum.getAsJsonObject());
+            frameSize = frame.getMarkers().size();
             resultList.addAll(dataTransformer.transformFrameData(frame));
         }
+        System.out.println("amount of frames: " + resultList.size());
+        System.out.println("frame size: " + frameSize);
         return resultList;
     }
 

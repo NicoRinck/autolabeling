@@ -10,11 +10,10 @@ import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.optimize.api.InvocationType;
 import org.deeplearning4j.optimize.listeners.EvaluativeListener;
-import org.nd4j.evaluation.classification.Evaluation;
+import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.nd4j.linalg.activations.Activation;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.dataset.api.DataSet;
 import org.nd4j.linalg.learning.config.Sgd;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import preprocess_data.EuclideanDistanceNormalizer;
@@ -63,7 +62,7 @@ public class TestNN {
         //NN Config
         final int numInputs = 105;
         final int outputNum = 35;
-        final long seed = 10L;
+        final long seed = 1014L;
 
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
                 .seed(seed)
@@ -82,7 +81,7 @@ public class TestNN {
 
         MultiLayerNetwork nn = new MultiLayerNetwork(conf);
         nn.init();
-        nn.setListeners(new EvaluativeListener(testDataIterator,1000));
+        nn.setListeners(new EvaluativeListener(testDataIterator,1, InvocationType.EPOCH_END), new ScoreIterationListener(1000));
 
         //Training
         nn.fit(trainDataIterator,10);

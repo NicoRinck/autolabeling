@@ -22,8 +22,9 @@ public class TrialDataTransformation {
         this.normalizationStrategy = normalizationStrategy;
     }
 
-    public TrialDataTransformation(FrameLabelingStrategy frameLabelingStrategy) {
-        this(frameLabelingStrategy,null,null);
+    public TrialDataTransformation(FrameLabelingStrategy frameLabelingStrategy,
+                                   FrameDataManipulationStrategy manipulator) {
+        this(frameLabelingStrategy,manipulator,null);
     }
 
     ArrayList<ArrayList<Writable>> transformFrameData(final Frame frame) {
