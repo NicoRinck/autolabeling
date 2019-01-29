@@ -1,7 +1,6 @@
 package deep_learning;
 
 import datavec.JsonTrialRecordReader;
-import javafx.scene.chart.PieChart;
 import org.datavec.api.split.FileSplit;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
@@ -11,16 +10,12 @@ import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
-import org.deeplearning4j.optimize.api.InvocationType;
-import org.deeplearning4j.optimize.listeners.EvaluativeListener;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.SplitTestAndTrain;
 import org.nd4j.linalg.dataset.api.DataSet;
-import org.nd4j.linalg.dataset.api.iterator.BaseDatasetIterator;
-import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.learning.config.Sgd;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import preprocess_data.JsonToTrialParser;
