@@ -1,20 +1,54 @@
 package preprocess_data.labeling;
 
+import org.datavec.api.writable.DoubleWritable;
 import org.datavec.api.writable.IntWritable;
+import org.datavec.api.writable.Text;
 import org.datavec.api.writable.Writable;
+import preprocess_data.data_model.Frame;
+import preprocess_data.data_model.Marker;
 
-public class OneTargetLabeling implements MarkerLabelingStrategy {
+import java.util.ArrayList;
+import java.util.List;
+
+public class OneTargetLabeling implements FrameLabelingStrategy {
 
     private final String targetLabel;
+    private final int amountOfLabels;
+
+    public OneTargetLabeling(String targetLabel, int amountOfLabels) {
+        this.targetLabel = targetLabel;
+        this.amountOfLabels = amountOfLabels;
+    }
 
     public OneTargetLabeling(String targetLabel) {
         this.targetLabel = targetLabel;
+        this.amountOfLabels = -1;
     }
 
-    public Writable getMarkerLabel(String markerLabel) {
-        if (markerLabel.equalsIgnoreCase(targetLabel)) {
-            return new IntWritable(1);
+    public ArrayList<Writable> getLabeledWritableList(Frame frame) {
+        int indexOfTarget = -1;
+        final ArrayList<Writable> resultList = new ArrayList<Writable>();
+        for (int i = 0; i < frame.getMarkers().size(); i++) {
+            Marker currentMarker = frame.getMarkers().get(i);
+            resultList.add(new DoubleWritable(currentMarker.getX()));
+            resultList.add(new DoubleWritable(currentMarker.getY()));
+            resultList.add(new DoubleWritable(currentMarker.getZ()));
+            if (currentMarker.getLabel().equalsIgnoreCase(targetLabel)) {
+                indexOfTarget = i;
+            }
         }
-        return new IntWritable(0);
+        resultList.add(new Text(indexOfTarget+""));
+        return resultList;
+    }
+
+    public List<String> getLabels() {
+        if (amountOfLabels > 0) {
+            ArrayList<String> resultList = new ArrayList<String>();
+            for (int i = 0; i < amountOfLabels; i++) {
+                resultList.add(i + "");
+            }
+            return resultList;
+        }
+        return null;
     }
 }

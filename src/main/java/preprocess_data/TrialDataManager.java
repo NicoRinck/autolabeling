@@ -6,6 +6,7 @@ import org.datavec.api.writable.Writable;
 import preprocess_data.data_model.Frame;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TrialDataManager {
 
@@ -18,12 +19,19 @@ public class TrialDataManager {
     }
 
     public ArrayList<ArrayList<Writable>> getTrialDataFromJson(JsonArray trialData) {
-        ArrayList<ArrayList<Writable>> resultList = new ArrayList<ArrayList<Writable>>();
+        final ArrayList<ArrayList<Writable>> resultList = new ArrayList<ArrayList<Writable>>();
+        int frameSize = 0;
         for (JsonElement trialDatum : trialData) {
-            ArrayList<Frame> frames = new ArrayList<Frame>();
-            Frame frame = jsonToTrialParser.getLabeledFrameFromJson(trialData.getAsJsonObject());
+            Frame frame = jsonToTrialParser.getFrameFromJson(trialDatum.getAsJsonObject());
+            frameSize = frame.getMarkers().size();
             resultList.addAll(dataTransformer.transformFrameData(frame));
         }
+        System.out.println("amount of frames: " + resultList.size());
+        System.out.println("frame size: " + frameSize);
         return resultList;
+    }
+
+    public TrialDataTransformation getDataTransformer() {
+        return dataTransformer;
     }
 }
