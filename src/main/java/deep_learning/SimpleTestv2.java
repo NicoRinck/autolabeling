@@ -2,7 +2,6 @@ package deep_learning;
 
 import datavec.JsonTrialRecordReader;
 import org.datavec.api.split.FileSplit;
-import org.deeplearning4j.api.storage.StatsStorage;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.datasets.iterator.ExistingDataSetIterator;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
@@ -15,9 +14,6 @@ import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.api.InvocationType;
 import org.deeplearning4j.optimize.listeners.EvaluativeListener;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
-import org.deeplearning4j.ui.api.UIServer;
-import org.deeplearning4j.ui.stats.StatsListener;
-import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
 import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -46,7 +42,7 @@ public class SimpleTestv2 {
 
         //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("LELB", 35);
-        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(10);
+        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(53);
         JsonToTrialParser jsonToTrialParser = new JsonToTrialParser();
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, manipulationStrategy);
         TrialDataManager trialDataManager = new TrialDataManager(transformation, jsonToTrialParser);
@@ -65,21 +61,22 @@ public class SimpleTestv2 {
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .activation(Activation.TANH)
                 .weightInit(WeightInit.NORMAL)
-                .updater(new Sgd(0.2))
+                .updater(new Sgd(0.4))//LR 0.4 bei aktueller Konfig (mit mehr DS pro epoche) --> 25%!!! --> potential für mehr epochen und weitere Anpassung der LR
                 .list()
                 .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(53).build())
                 .layer(1, new DenseLayer.Builder().nIn(53).nOut(45).build())
-                .layer(2, new DenseLayer.Builder().nIn(45).nOut(45).build())
-                .layer(3, new OutputLayer.Builder(LossFunctions.LossFunction.SQUARED_LOSS).nIn(45).nOut(outputNum).build())
+                .layer(2, new DenseLayer.Builder().nIn(45).nOut(35).build())
+                .layer(3, new OutputLayer.Builder(LossFunctions.LossFunction.SQUARED_LOSS).nIn(35).nOut(outputNum).build())
                 .build();
-
+                //bessere Ergebnisse bei höherer Anzahl an Daten pro epoche--> logisch
+                //50 shuffles und 5 epochen ist besser als 10 shuffles 50 epochen (16,6%)
         //data
-        RecordReaderDataSetIterator trainDataIterator = new RecordReaderDataSetIterator(trainDataReader, 47500);
+        RecordReaderDataSetIterator trainDataIterator = new RecordReaderDataSetIterator(trainDataReader, 250000); //mehr = mehr
         org.nd4j.linalg.dataset.DataSet dataSet = trainDataIterator.next();
         dataSet.shuffle(235L);
 
         //Normalization
-        NormalizerMinMaxScaler normalizerMinMaxScaler = new NormalizerMinMaxScaler(-1,1);
+        NormalizerMinMaxScaler normalizerMinMaxScaler = new NormalizerMinMaxScaler(-1, 1);
         normalizerMinMaxScaler.fit(dataSet);
         normalizerMinMaxScaler.transform(dataSet);
 
@@ -89,19 +86,18 @@ public class SimpleTestv2 {
         org.nd4j.linalg.dataset.DataSet test = testAndTrain.getTest();
 
         //init visualization
-        UIServer uiServer = UIServer.getInstance();
+        /*UIServer uiServer = UIServer.getInstance();
         StatsStorage statsStorage = new InMemoryStatsStorage();
-        uiServer.attach(statsStorage);
+        uiServer.attach(statsStorage);*/
 
         //init nn
         MultiLayerNetwork nn = new MultiLayerNetwork(conf);
         nn.init();
         nn.setListeners(new ScoreIterationListener(50000),
-                        new EvaluativeListener(test,5, InvocationType.EPOCH_END),
-                        new StatsListener(statsStorage));
+                new EvaluativeListener(test, 1, InvocationType.EPOCH_END));
         //Training
         DataSetIterator dataSetIterator = new ExistingDataSetIterator(train);
-        nn.fit(dataSetIterator, 50);
+        nn.fit(dataSetIterator, 5);
 
         //Eval (full test data)
         System.out.println("start evaluation");
@@ -109,14 +105,14 @@ public class SimpleTestv2 {
 
         INDArray features = test.getFeatures();
         INDArray prediction = nn.output(features);
-        eval.eval(test.getLabels(),prediction);
-        System.out.println(eval.stats(false,true)); //prints confusion matrix
+        eval.eval(test.getLabels(), prediction);
+        System.out.println(eval.stats(false, true)); //prints confusion matrix
 
         //single eval
         System.out.println("single eval:");
         Evaluation evaluation = new Evaluation(35);
         evaluation.eval(test.getLabels().getRow(0), prediction.getRow(0));
-        System.out.println(evaluation.stats(false,true));
+        System.out.println(evaluation.stats(false, true));
         System.out.println("Datensatz 1 --> Features: ");
         printINDArray(features.getRow(0));
         System.out.println("Datensatz 1 --> Prediction: ");
