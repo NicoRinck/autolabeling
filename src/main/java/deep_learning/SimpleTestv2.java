@@ -62,7 +62,7 @@ public class SimpleTestv2 {
                 .activation(Activation.TANH)
                 .weightInit(WeightInit.NORMAL)
                 .updater(new Sgd(0.4))//LR 0.4 bei aktueller Konfig (mit mehr DS pro epoche) --> 25%!!! --> potential für mehr epochen und weitere Anpassung der LR
-                .list()
+                .list()                 //10 epochen 32,75%
                 .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(53).build())
                 .layer(1, new DenseLayer.Builder().nIn(53).nOut(45).build())
                 .layer(2, new DenseLayer.Builder().nIn(45).nOut(35).build())
@@ -97,7 +97,7 @@ public class SimpleTestv2 {
                 new EvaluativeListener(test, 1, InvocationType.EPOCH_END));
         //Training
         DataSetIterator dataSetIterator = new ExistingDataSetIterator(train);
-        nn.fit(dataSetIterator, 5);
+        nn.fit(dataSetIterator, 50); //20 --> 44% //50 --> 51% (stagniert)
 
         //Eval (full test data)
         System.out.println("start evaluation");
