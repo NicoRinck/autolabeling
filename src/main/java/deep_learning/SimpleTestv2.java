@@ -45,7 +45,7 @@ public class SimpleTestv2 {
         FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(53);
         JsonToTrialParser jsonToTrialParser = new JsonToTrialParser();
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, manipulationStrategy);
-        TrialDataManager trialDataManager = new TrialDataManager(transformation, jsonToTrialParser);
+        TrialDataManager trialDataManager = new TrialDataManager(transformation);
 
         //DataSet Iterators
         JsonTrialRecordReader trainDataReader = new JsonTrialRecordReader(trialDataManager);

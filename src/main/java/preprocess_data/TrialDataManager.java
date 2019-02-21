@@ -6,29 +6,47 @@ import org.datavec.api.writable.Writable;
 import preprocess_data.data_model.Frame;
 
 import java.util.ArrayList;
-import java.util.List;
 
+//manages json-parsing, normalization and transformation of trial-data
 public class TrialDataManager {
 
     private final TrialDataTransformation dataTransformer;
     private final JsonToTrialParser jsonToTrialParser;
+    private final TrialNormalizationStrategy normalizationStrategy;
 
-    public TrialDataManager(TrialDataTransformation dataTransformer, JsonToTrialParser jsonToTrialParser) {
+    public TrialDataManager(TrialDataTransformation dataTransformer, TrialNormalizationStrategy normalizationStrategy) {
         this.dataTransformer = dataTransformer;
-        this.jsonToTrialParser = jsonToTrialParser;
+        jsonToTrialParser = new JsonToTrialParser(normalizationStrategy);
+        this.normalizationStrategy = normalizationStrategy;
+    }
+
+    public TrialDataManager(TrialDataTransformation dataTransformer) {
+        this(dataTransformer, null);
     }
 
     public ArrayList<ArrayList<Writable>> getTrialDataFromJson(JsonArray trialData) {
         final ArrayList<ArrayList<Writable>> resultList = new ArrayList<ArrayList<Writable>>();
-        int frameSize = 0;
+        ArrayList<Frame> frames = getFramesFromJson(trialData);
+        for (Frame frame : frames) {
+            resultList.addAll(transformFrameToWritable(frame));
+        }
+        return resultList;
+    }
+
+    private ArrayList<ArrayList<Writable>> transformFrameToWritable(Frame frame) {
+        if (normalizationStrategy != null) {
+            return dataTransformer.transformFrameData(normalizationStrategy.normalizeFrame(frame));
+        }
+        return dataTransformer.transformFrameData(frame);
+    }
+
+    private ArrayList<Frame> getFramesFromJson(JsonArray trialData) {
+        final ArrayList<Frame> frames = new ArrayList<Frame>();
         for (JsonElement trialDatum : trialData) {
             Frame frame = jsonToTrialParser.getFrameFromJson(trialDatum.getAsJsonObject());
-            frameSize = frame.getMarkers().size();
-            resultList.addAll(dataTransformer.transformFrameData(frame));
+            frames.add(frame);
         }
-        System.out.println("amount of frames: " + resultList.size());
-        System.out.println("frame size: " + frameSize);
-        return resultList;
+        return frames;
     }
 
     public TrialDataTransformation getDataTransformer() {

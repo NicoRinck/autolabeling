@@ -13,24 +13,39 @@ import java.util.TreeSet;
 
 public class JsonToTrialParser {
 
+    private final TrialNormalizationStrategy normalizationStrategy;
     private Set<String> markerLabels;
+
+    //if set normalization strategy collects data for the normalization (loop optimization)
+    public JsonToTrialParser(TrialNormalizationStrategy normalizationStrategy) {
+        this.normalizationStrategy = normalizationStrategy;
+    }
+
+    public JsonToTrialParser() {
+        this(null);
+    }
 
     Frame getFrameFromJson(JsonObject frameJson) {
         //only get labels once
         if (markerLabels == null) {
             markerLabels = getMarkerLabels(frameJson);
         }
-        final ArrayList<Marker> result = new ArrayList<Marker>();
+        final ArrayList<Marker> resultList = new ArrayList<Marker>();
         for (String markerLabel : markerLabels) {
-            result.add(new Marker(markerLabel,
+            Marker marker = new Marker(markerLabel,
                     frameJson.get(markerLabel + "_x").getAsDouble(),
                     frameJson.get(markerLabel + "_y").getAsDouble(),
-                    frameJson.get(markerLabel + "_z").getAsDouble()));
+                    frameJson.get(markerLabel + "_z").getAsDouble());
+            if (normalizationStrategy != null) {
+                normalizationStrategy.setNormalizationData(marker); //collect data for normalization
+            }
+            resultList.add(marker);
         }
-        return new Frame(result);
+
+        return new Frame(resultList);
     }
 
-    Set<String> getMarkerLabels(@NotNull JsonObject sampleObject) {
+    private Set<String> getMarkerLabels(@NotNull JsonObject sampleObject) {
         Set<String> labels = new TreeSet<String>();
         for (Map.Entry<String, JsonElement> jsonPropertyEntry : sampleObject.entrySet()) {
             int indexOfSeparator = jsonPropertyEntry.getKey().indexOf("_");

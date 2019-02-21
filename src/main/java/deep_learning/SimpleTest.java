@@ -43,9 +43,8 @@ public class SimpleTest {
         //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("LELB", 35);
         FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(10);
-        JsonToTrialParser jsonToTrialParser = new JsonToTrialParser();
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, manipulationStrategy);
-        TrialDataManager trialDataManager = new TrialDataManager(transformation, jsonToTrialParser);
+        TrialDataManager trialDataManager = new TrialDataManager(transformation);
 
         //DataSet Iterators
         JsonTrialRecordReader trainDataReader = new JsonTrialRecordReader(trialDataManager);
