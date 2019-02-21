@@ -32,7 +32,7 @@ import preprocess_data.labeling.OneTargetLabeling;
 
 import java.io.File;
 
-public class SimpleTest {
+public class SimpleTestv2 {
     public static void main(String[] args) throws Exception {
 
         String[] allowedFileFormat = {"json"};
@@ -42,7 +42,7 @@ public class SimpleTest {
 
         //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("LELB", 35);
-        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(10);
+        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(53);
         JsonToTrialParser jsonToTrialParser = new JsonToTrialParser();
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, manipulationStrategy);
         TrialDataManager trialDataManager = new TrialDataManager(transformation, jsonToTrialParser);
@@ -59,76 +59,66 @@ public class SimpleTest {
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .activation(Activation.TANH)//TANH inklusive neuer Normalisierung auf -1,1 sorgt für drastische Verbesserung
-                .weightInit(WeightInit.NORMAL)//beste Wahl: XAVIER (ca. 13-14%) oder Normal (bis zu 15% - mit LR: 0,2), Sigmoid Uniform führt zu übermäßigen Fokussierung auf ein Neuron im Ausgabelayer
-                .updater(new Sgd(0.2))//Bisher beste Ergebnisse: 0.2 --> 12,5%
-                .list()
-                .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(53).build())//Mehr Neuronen in den Hidden Layer --> bessere Ergebnisse --> 13-14%
+                .activation(Activation.TANH)
+                .weightInit(WeightInit.NORMAL)
+                .updater(new Sgd(0.4))//LR 0.4 bei aktueller Konfig (mit mehr DS pro epoche) --> 25%!!! --> potential für mehr epochen und weitere Anpassung der LR
+                .list()                 //10 epochen 32,75%
+                .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(53).build())
                 .layer(1, new DenseLayer.Builder().nIn(53).nOut(45).build())
                 .layer(2, new DenseLayer.Builder().nIn(45).nOut(35).build())
                 .layer(3, new OutputLayer.Builder(LossFunctions.LossFunction.SQUARED_LOSS).nIn(35).nOut(outputNum).build())
                 .build();
-
+                //bessere Ergebnisse bei höherer Anzahl an Daten pro epoche--> logisch
+                //50 shuffles und 5 epochen ist besser als 10 shuffles 50 epochen (16,6%)
         //data
-        RecordReaderDataSetIterator trainDataIterator = new RecordReaderDataSetIterator(trainDataReader, 47500);// mehr Daten --> klare Verbeserung --> stärkeres durchmischen der Marker (shuffle)
-
-        org.nd4j.linalg.dataset.DataSet dataSet = trainDataIterator.next();//14000 datasets (batchsize) every dataset consists of 105 features and 35 labels (as array --> 0 0 0 ... 1 0 0)
+        RecordReaderDataSetIterator trainDataIterator = new RecordReaderDataSetIterator(trainDataReader, 250000); //mehr = mehr
+        org.nd4j.linalg.dataset.DataSet dataSet = trainDataIterator.next();
         dataSet.shuffle(235L);
 
         //Normalization
-        NormalizerMinMaxScaler normalizerMinMaxScaler = new NormalizerMinMaxScaler(-1,1); //ohne Normalisierung keine guten Ergebnisse (TANH)
+        NormalizerMinMaxScaler normalizerMinMaxScaler = new NormalizerMinMaxScaler(-1, 1);
         normalizerMinMaxScaler.fit(dataSet);
         normalizerMinMaxScaler.transform(dataSet);
-        /*NormalizerStandardize normalizerStandardize = new NormalizerStandardize();
-        normalizerStandardize.fit(dataSet);
-        normalizerStandardize.transform(dataSet);*/
 
         //split
         SplitTestAndTrain testAndTrain = dataSet.splitTestAndTrain(0.8);
-
         org.nd4j.linalg.dataset.DataSet train = testAndTrain.getTrain();
         org.nd4j.linalg.dataset.DataSet test = testAndTrain.getTest();
+
+        //init visualization
+        /*UIServer uiServer = UIServer.getInstance();
+        StatsStorage statsStorage = new InMemoryStatsStorage();
+        uiServer.attach(statsStorage);*/
 
         //init nn
         MultiLayerNetwork nn = new MultiLayerNetwork(conf);
         nn.init();
-        nn.setListeners(new ScoreIterationListener(50000), new EvaluativeListener(test,5, InvocationType.EPOCH_END));
+        nn.setListeners(new ScoreIterationListener(50000),
+                new EvaluativeListener(test, 1, InvocationType.EPOCH_END));
         //Training
         DataSetIterator dataSetIterator = new ExistingDataSetIterator(train);
-        nn.fit(dataSetIterator, 50);
+        nn.fit(dataSetIterator, 50); //20 --> 44% //50 --> 51% (stagniert)
 
-        //Eval
+        //Eval (full test data)
         System.out.println("start evaluation");
         Evaluation eval = new Evaluation(35);
 
         INDArray features = test.getFeatures();
         INDArray prediction = nn.output(features);
-        eval.eval(test.getLabels(),prediction);
-        System.out.println(eval.stats(false,true)); //prints confusion matrix
+        eval.eval(test.getLabels(), prediction);
+        System.out.println(eval.stats(false, true)); //prints confusion matrix
 
         //single eval
         System.out.println("single eval:");
         Evaluation evaluation = new Evaluation(35);
         evaluation.eval(test.getLabels().getRow(0), prediction.getRow(0));
-        System.out.println(evaluation.stats(false,true));
+        System.out.println(evaluation.stats(false, true));
         System.out.println("Datensatz 1 --> Features: ");
         printINDArray(features.getRow(0));
         System.out.println("Datensatz 1 --> Prediction: ");
         printINDArray(prediction.getRow(0));
         System.out.println("geschätzter Wert: ");
         System.out.println(prediction.getRow(0).maxNumber());
-
-        /*Problem aktuelle Config --> keine Veränderung der Präzision --> passiert da überhaupt was?
-        * weiteres Vorgehen --> andere NN-Modelle testen
-        * NN gibt immer nur einen Output. Daher sind die Prediction Values immer gleich dem Zufallswert
-        *  --> wird nur ein Output-Neuron trainiert?
-        *
-        *
-        * Erste Erkenntnisse:
-        * hohe Lernrate --> starke fixierung auf einen Output
-        * mehr Layer --> bessere Verteilung
-        * TANH und eine Normalisierung aud -1,1 führt zu den besten Ergebnissen
-        * */
     }
 
     private static void printINDArray(INDArray indArray) {
@@ -136,6 +126,6 @@ public class SimpleTest {
         for (int i = 0; i < array.length; i++) {
             System.out.print(i + ": " + array[i] + " | ");
         }
-        System.out.println("");
+        System.out.println();
     }
 }
