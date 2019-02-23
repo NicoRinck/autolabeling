@@ -12,7 +12,7 @@ public class TrialDataManager {
 
     private final TrialDataTransformation dataTransformer;
     private final JsonToTrialParser jsonToTrialParser;
-    private final TrialNormalizationStrategy normalizationStrategy;
+    private TrialNormalizationStrategy normalizationStrategy;
 
     public TrialDataManager(TrialDataTransformation dataTransformer, TrialNormalizationStrategy normalizationStrategy) {
         this.dataTransformer = dataTransformer;
@@ -26,9 +26,12 @@ public class TrialDataManager {
 
     public ArrayList<ArrayList<Writable>> getTrialDataFromJson(JsonArray trialData) {
         final ArrayList<ArrayList<Writable>> resultList = new ArrayList<ArrayList<Writable>>();
-        ArrayList<Frame> frames = getFramesFromJson(trialData);
+        final ArrayList<Frame> frames = getFramesFromJson(trialData);
         for (Frame frame : frames) {
             resultList.addAll(transformFrameToWritable(frame));
+        }
+        if (normalizationStrategy != null) {
+            normalizationStrategy = normalizationStrategy.getNewInstance();
         }
         return resultList;
     }

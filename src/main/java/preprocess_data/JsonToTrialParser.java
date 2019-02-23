@@ -37,7 +37,7 @@ public class JsonToTrialParser {
                     frameJson.get(markerLabel + "_y").getAsDouble(),
                     frameJson.get(markerLabel + "_z").getAsDouble());
             if (normalizationStrategy != null) {
-                normalizationStrategy.setNormalizationData(marker); //collect data for normalization
+                normalizationStrategy.collectMarkerData(marker); //collect data for normalization
             }
             resultList.add(marker);
         }

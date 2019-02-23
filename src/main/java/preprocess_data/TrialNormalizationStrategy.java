@@ -8,5 +8,8 @@ public interface TrialNormalizationStrategy {
     Frame normalizeFrame(Frame frame);
 
     //Method to set data for the normalization process from outside
-    void setNormalizationData(Marker marker);
+    void collectMarkerData(Marker marker);
+
+    //returns new instance of the strategy to reset values and calculations
+    TrialNormalizationStrategy getNewInstance();
 }
