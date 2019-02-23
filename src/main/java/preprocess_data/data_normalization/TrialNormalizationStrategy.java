@@ -1,4 +1,4 @@
-package preprocess_data;
+package preprocess_data.data_normalization;
 
 import preprocess_data.data_model.Frame;
 import preprocess_data.data_model.Marker;

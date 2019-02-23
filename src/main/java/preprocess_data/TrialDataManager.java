@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import org.datavec.api.writable.Writable;
 import preprocess_data.data_model.Frame;
+import preprocess_data.data_normalization.TrialNormalizationStrategy;
 
 import java.util.ArrayList;
 

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import preprocess_data.data_model.Frame;
 import preprocess_data.data_model.Marker;
+import preprocess_data.data_normalization.TrialNormalizationStrategy;
 
 import java.util.ArrayList;
 import java.util.Map;
