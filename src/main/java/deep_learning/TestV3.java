@@ -22,29 +22,32 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.dataset.api.preprocessor.NormalizerMinMaxScaler;
 import org.nd4j.linalg.learning.config.Sgd;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
-import preprocess_data.JsonToTrialParser;
 import preprocess_data.TrialDataManager;
 import preprocess_data.TrialDataTransformation;
 import preprocess_data.data_manipulaton.FrameDataManipulationStrategy;
 import preprocess_data.data_manipulaton.FrameShuffleManipulator;
+import preprocess_data.data_normalization.CentroidNormalization;
+import preprocess_data.data_normalization.TrialNormalizationStrategy;
 import preprocess_data.labeling.FrameLabelingStrategy;
 import preprocess_data.labeling.OneTargetLabeling;
 
 import java.io.File;
 
-public class SimpleTestv2 {
+public class TestV3 {
     public static void main(String[] args) throws Exception {
 
         String[] allowedFileFormat = {"json"};
         //Input Data
-        File trainDirectory = new File("C:\\Users\\nico.rinck\\Desktop\\Daten_Studienarbeit\\ABD_train\\04_MH_O2_S1_Abd.json");
+        File trainDirectory = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\stack1");
         FileSplit fileSplitTrain = new FileSplit(trainDirectory, allowedFileFormat);
 
         //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("LELB", 35);
         FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(53);
+
+        TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization();
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, manipulationStrategy);
-        TrialDataManager trialDataManager = new TrialDataManager(transformation);
+        TrialDataManager trialDataManager = new TrialDataManager(transformation,normalizationStrategy);
 
         //DataSet Iterators
         JsonTrialRecordReader trainDataReader = new JsonTrialRecordReader(trialDataManager);
@@ -67,8 +70,8 @@ public class SimpleTestv2 {
                 .layer(2, new DenseLayer.Builder().nIn(45).nOut(35).build())
                 .layer(3, new OutputLayer.Builder(LossFunctions.LossFunction.SQUARED_LOSS).nIn(35).nOut(outputNum).build())
                 .build();
-                //bessere Ergebnisse bei höherer Anzahl an Daten pro epoche--> logisch
-                //50 shuffles und 5 epochen ist besser als 10 shuffles 50 epochen (16,6%)
+        //bessere Ergebnisse bei höherer Anzahl an Daten pro epoche--> logisch
+        //50 shuffles und 5 epochen ist besser als 10 shuffles 50 epochen (16,6%)
         //data
         RecordReaderDataSetIterator trainDataIterator = new RecordReaderDataSetIterator(trainDataReader, 250000); //mehr = mehr
         org.nd4j.linalg.dataset.DataSet dataSet = trainDataIterator.next();
