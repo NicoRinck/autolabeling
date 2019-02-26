@@ -18,7 +18,7 @@ public class TrialDataGenerator {
     }
 
 
-    public boolean generateTrial(String filename) {
+    void generateTrial(String filename) {
 
         try {
             JsonWriter jsonWriter = new JsonWriter(new FileWriter(createFile(filename)));
@@ -29,7 +29,6 @@ public class TrialDataGenerator {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
     }
 
     private File createFile(String filename) {
