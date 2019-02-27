@@ -8,36 +8,38 @@ import java.util.ArrayList;
 //forward frame includes the first Frame
 class FrameGenerator {
 
-    private final ArrayList<MarkerMovementGenerator> markerGenerators;
+    private final ArrayList<MarkerGenerator> markerGenerators;
     private final MarkerToJsonConverter markerToJsonConverter = new MarkerToJsonConverter();
     private final int amountOfFrames;
     private final int backwardFrames;
-    private final int forewardFrames;
+    private final int forwardFrames;
 
-    FrameGenerator(ArrayList<MarkerMovementGenerator> markerGenerators, int amountOfFrames) {
+    FrameGenerator(ArrayList<MarkerGenerator> markerGenerators, int amountOfFrames) {
         this.markerGenerators = markerGenerators;
         this.amountOfFrames = amountOfFrames;
-        this.forewardFrames = -1;
+        this.forwardFrames = -1;
         this.backwardFrames = -1;
     }
 
-    FrameGenerator(ArrayList<MarkerMovementGenerator> markerGenerators, int forwardFrames, int backwardFrames) {
+    FrameGenerator(ArrayList<MarkerGenerator> markerGenerators, int forwardFrames, int backwardFrames) {
         this.markerGenerators = markerGenerators;
         this.amountOfFrames = forwardFrames + backwardFrames;
-        this.forewardFrames = forwardFrames;
+        this.forwardFrames = forwardFrames;
         this.backwardFrames = backwardFrames;
     }
 
-    void generateFrames(JsonWriter jsonWriter) throws IOException {
+    void generateFrames(JsonWriter jsonWriter, int repeatMovement) throws IOException {
         jsonWriter.beginArray();
-        generateFrameObjects(jsonWriter);
+        for (int i = 0; i < repeatMovement; i++) {
+            generateFrameObjects(jsonWriter);
+        }
         jsonWriter.endArray();
     }
 
     private void generateFrameObjects(JsonWriter jsonWriter) throws IOException {
         for (int i = 0; i < amountOfFrames; i++) {
             jsonWriter.beginObject();
-            if (forewardFrames != -1 && backwardFrames != -1 && i >= forewardFrames) {
+            if (forwardFrames != -1 && backwardFrames != -1 && i >= forwardFrames) {
                 addFrameObject(jsonWriter, countBackwards(i));
             } else {
                 addFrameObject(jsonWriter, i);
@@ -47,13 +49,13 @@ class FrameGenerator {
     }
 
     private void addFrameObject(JsonWriter jsonWriter, int counter) throws IOException {
-        for (MarkerMovementGenerator markerGenerator : markerGenerators) {
+        for (MarkerGenerator markerGenerator : markerGenerators) {
             markerToJsonConverter.addToJsonObject(jsonWriter, markerGenerator.getNextMarker(counter));
         }
     }
 
     private int countBackwards(int counter) {
-        return forewardFrames - 2 - (counter - forewardFrames);
+        return forwardFrames - 2 - (counter - forwardFrames);
     }
 
 }

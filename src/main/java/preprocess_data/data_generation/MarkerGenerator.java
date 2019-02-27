@@ -3,13 +3,13 @@ package preprocess_data.data_generation;
 import javafx.geometry.Point3D;
 import preprocess_data.data_model.Marker;
 
-class MarkerMovementGenerator {
+class MarkerGenerator {
 
     private final Marker baseMarker;
     private final MarkerMovementFunction movementFunction;
     private final DirectionFunction xyDirection;
 
-    MarkerMovementGenerator(Marker baseMarker, MarkerMovementFunction movementFunction, DirectionFunction xyDirection) {
+    MarkerGenerator(Marker baseMarker, MarkerMovementFunction movementFunction, DirectionFunction xyDirection) {
         this.baseMarker = baseMarker;
         this.movementFunction = movementFunction;
         this.xyDirection = xyDirection;

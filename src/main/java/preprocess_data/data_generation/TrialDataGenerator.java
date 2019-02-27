@@ -18,12 +18,11 @@ public class TrialDataGenerator {
     }
 
 
-    void generateTrial(String filename) {
-
+    void generateTrial(String filename, int repeatMovement) {
         try {
             JsonWriter jsonWriter = new JsonWriter(new FileWriter(createFile(filename)));
             jsonWriter.beginObject().name("trial").beginObject().name("frames");
-            frameGenerator.generateFrames(jsonWriter);
+            frameGenerator.generateFrames(jsonWriter, repeatMovement);
             jsonWriter.endObject().endObject(); //close remaining Objects
             jsonWriter.close();
         } catch (IOException e) {
