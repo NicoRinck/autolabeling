@@ -123,7 +123,7 @@ public class TestV3 {
         System.out.println(prediction.getRow(0).maxNumber());
     }
 
-    private static void printINDArray(INDArray indArray) {
+    static void printINDArray(INDArray indArray) {
         double[] array = indArray.toDoubleVector();
         for (int i = 0; i < array.length; i++) {
             System.out.print(i + ": " + array[i] + " | ");

@@ -18,6 +18,7 @@ import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
+import org.nd4j.linalg.dataset.api.preprocessor.NormalizerMinMaxScaler;
 import org.nd4j.linalg.learning.config.Sgd;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import preprocess_data.TrialDataManager;
@@ -43,20 +44,20 @@ public class TestNormalization {
 
         //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("LELB", 35);
-        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(20);
+        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(3);
         TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization();
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, manipulationStrategy);
-        TrialDataManager trialDataManager = new TrialDataManager(transformation, normalizationStrategy);
+        TrialDataManager trialDataManager = new TrialDataManager(transformation);
 
         //DataSet Iterators
         JsonTrialRecordReader trainDataReader = new JsonTrialRecordReader(trialDataManager);
         JsonTrialRecordReader testDataReader = new JsonTrialRecordReader(trialDataManager);
         trainDataReader.initialize(fileSplitTrain);
-        testDataReader.initialize(fileSplitTrain);
+        testDataReader.initialize(fileSplitTest);
 
         //NN Config
-        final int numInputs = 30;
-        final int outputNum = 10;
+        final int numInputs = 105;
+        final int outputNum = 35;
         final long seed = 1014L;
 
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
@@ -66,19 +67,24 @@ public class TestNormalization {
                 .weightInit(WeightInit.NORMAL)
                 .updater(new Sgd(0.4))
                 .list()
-                .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(15).build())
-                .layer(1, new DenseLayer.Builder().nIn(15).nOut(15).build())
-                .layer(2, new OutputLayer.Builder(LossFunctions.LossFunction.SQUARED_LOSS).nIn(15).nOut(outputNum).build())
+                .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(53).build())
+                .layer(1, new DenseLayer.Builder().nIn(53).nOut(35).build())
+                .layer(2, new OutputLayer.Builder(LossFunctions.LossFunction.SQUARED_LOSS).nIn(35).nOut(outputNum).build())
                 .build();
 
         //dataset iterator
-        RecordReaderDataSetIterator trainIterator = new RecordReaderDataSetIterator(trainDataReader, 50);
-        RecordReaderDataSetIterator testIterator = new RecordReaderDataSetIterator(testDataReader,50);
+        RecordReaderDataSetIterator trainIterator = new RecordReaderDataSetIterator(trainDataReader, 1);
+        RecordReaderDataSetIterator testIterator = new RecordReaderDataSetIterator(testDataReader,1);
 
         //Normalization
-        /*NormalizerMinMaxScaler normalizerMinMaxScaler = new NormalizerMinMaxScaler(-1, 1);
+        int rangeMin = -1;
+        int rangeMax = 1;
+        NormalizerMinMaxScaler normalizerMinMaxScaler = new NormalizerMinMaxScaler(rangeMin,rangeMax);
         normalizerMinMaxScaler.fit(trainIterator);
-        trainIterator.setPreProcessor(normalizerMinMaxScaler);*/
+        trainIterator.setPreProcessor(normalizerMinMaxScaler);
+        NormalizerMinMaxScaler normalizerMinMaxScaler1 = new NormalizerMinMaxScaler(rangeMin,rangeMax);
+        normalizerMinMaxScaler1.fit(testIterator);
+        testIterator.setPreProcessor(normalizerMinMaxScaler1);
 
         //init nn
         MultiLayerNetwork nn = new MultiLayerNetwork(conf);
@@ -87,17 +93,7 @@ public class TestNormalization {
         nn.setListeners(new ScoreIterationListener(10000), evaluativeListener);
 
         //Training
-        nn.fit(trainIterator, 5);
-
-        //Eval (full test data)
-        Evaluation evaluation = new Evaluation(10);
-        testIterator.reset();
-        DataSet testData = testIterator.next();
-        INDArray features = testData.getFeatures();
-        INDArray prediction = nn.output(features);
-        evaluation.eval(testData.getLabels(), prediction);
-        evaluation.accuracy();
-        System.out.println(evaluation.stats(false, true)); //prints confusion matrix
+        nn.fit(trainIterator, 1);
 
         //epochs
         IEvaluation[] evaluations = evaluativeListener.getEvaluations();
@@ -112,5 +108,26 @@ public class TestNormalization {
                 }
             }
         }
+
+        System.out.println("start evaluation");
+        Evaluation eval = new Evaluation(outputNum);
+        testIterator.reset();
+        DataSet testData = testIterator.next();
+        INDArray features = testData.getFeatures();
+        INDArray prediction = nn.output(features);
+        eval.eval(testData.getLabels(), prediction);
+        System.out.println(eval.stats(false, true));
+
+        //single eval
+        System.out.println("single eval:");
+        Evaluation evaluation = new Evaluation(outputNum);
+        eval.eval(testData.getLabels().getRow(0), prediction.getRow(0));
+        System.out.println(evaluation.stats(false, true));
+        System.out.println("Datensatz 1 --> Features: ");
+        TestV3.printINDArray(features.getRow(0));
+        System.out.println("Datensatz 1 --> Prediction: ");
+        TestV3.printINDArray(prediction.getRow(0));
+        System.out.println("geschätzter Wert: ");
+        System.out.println(prediction.getRow(0).maxNumber());
     }
 }

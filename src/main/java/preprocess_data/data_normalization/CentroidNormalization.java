@@ -14,7 +14,7 @@ public class CentroidNormalization implements TrialNormalizationStrategy {
 
     public Frame normalizeFrame(final Frame frame) {
         calculateCentroid();
-        final ArrayList<Marker> newMarkers = new ArrayList<Marker>();
+        final ArrayList<Marker> newMarkers = new ArrayList<>();
         for (final Marker marker : frame.getMarkers()) {
             newMarkers.add(normalizeMarker(marker));
         }
@@ -31,6 +31,7 @@ public class CentroidNormalization implements TrialNormalizationStrategy {
     }
 
     private Marker normalizeMarker(Marker marker) {
+        System.out.println(centroid);
         return new Marker(marker.getLabel(),
                 marker.getX() - centroid.getX(),
                 marker.getY() - centroid.getY(),
