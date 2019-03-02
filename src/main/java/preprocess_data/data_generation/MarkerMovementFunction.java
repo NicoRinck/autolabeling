@@ -1,7 +1,6 @@
 package preprocess_data.data_generation;
 
-import javafx.geometry.Point2D;
-import javafx.geometry.Point3D;
+import preprocess_data.data_model.Coordinate3D;
 
 //TODO: refactor --> merge Direction function and this class --> takes only stepwidth from outside --> transform with params for each dimension
 class MarkerMovementFunction {
@@ -23,11 +22,11 @@ class MarkerMovementFunction {
         this(coefficientX, 1, coefficientY, 1);
     }
 
-    Point3D getNextMarker(Point2D newXYPosition) {
-        return new Point3D(newXYPosition.getX(), newXYPosition.getY(), getNextZ(newXYPosition));
+    Coordinate3D getNextMarker(Coordinate3D newXYPosition) {
+        return new Coordinate3D(newXYPosition.getX(), newXYPosition.getY(), getNextZ(newXYPosition));
     }
 
-    private double getNextZ(Point2D xy) {
+    private double getNextZ(Coordinate3D xy) {
         return coefficientX * Math.pow(xy.getX(), exponentX) + coefficientY * Math.pow(xy.getY(), exponentY);
     }
 }

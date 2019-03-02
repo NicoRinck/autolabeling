@@ -36,8 +36,8 @@ public class TestNormalization {
     public static void main(String[] args) throws Exception {
         String[] allowedFileFormat = {"json"};
         //Input Data
-        File trainDirectory = new File("C:\\Users\\Nico Rinck\\Desktop\\Daten_Studienarbeit\\train");
-        File testDirectory = new File("C:\\Users\\Nico Rinck\\Desktop\\Daten_Studienarbeit\\test");
+        File trainDirectory = new File("C:\\Users\\nicor\\Desktop\\Daten_Studienarbeit\\train");
+        File testDirectory = new File("C:\\Users\\nicor\\Desktop\\Daten_Studienarbeit\\test");
         FileSplit fileSplitTrain = new FileSplit(trainDirectory, allowedFileFormat);
         FileSplit fileSplitTest = new FileSplit(testDirectory,allowedFileFormat);
 
@@ -87,7 +87,7 @@ public class TestNormalization {
         nn.setListeners(new ScoreIterationListener(10000), evaluativeListener);
 
         //Training
-        nn.fit(trainIterator, 50);
+        nn.fit(trainIterator, 5);
 
         //Eval (full test data)
         Evaluation evaluation = new Evaluation(10);

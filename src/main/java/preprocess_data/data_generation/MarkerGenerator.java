@@ -1,6 +1,6 @@
 package preprocess_data.data_generation;
 
-import javafx.geometry.Point3D;
+import preprocess_data.data_model.Coordinate3D;
 import preprocess_data.data_model.Marker;
 
 class MarkerGenerator {
@@ -19,7 +19,7 @@ class MarkerGenerator {
         return getMarkerFromPoint(movementFunction.getNextMarker(xyDirection.getNextPosition(stepCounter)), baseMarker);
     }
 
-    private Marker getMarkerFromPoint(Point3D markerPosition, Marker baseMarker) {
+    private Marker getMarkerFromPoint(Coordinate3D markerPosition, Marker baseMarker) {
         return new Marker(baseMarker.getLabel(),
                 baseMarker.getX() + markerPosition.getX(),
                 baseMarker.getY() + markerPosition.getY(),

@@ -1,6 +1,6 @@
 package preprocess_data.data_normalization;
 
-import javafx.geometry.Point3D;
+import preprocess_data.data_model.Coordinate3D;
 import preprocess_data.data_model.Frame;
 import preprocess_data.data_model.Marker;
 
@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 public class CentroidNormalization implements TrialNormalizationStrategy {
 
-    private final Point3D addedValues = new Point3D(0,0,0);
+    private final Coordinate3D addedValues = new Coordinate3D(0,0,0);
     private int counter = 0;
-    private Point3D centroid;
+    private Coordinate3D centroid;
 
     public Frame normalizeFrame(final Frame frame) {
         calculateCentroid();
@@ -23,7 +23,7 @@ public class CentroidNormalization implements TrialNormalizationStrategy {
 
     private void calculateCentroid() {
         if (centroid == null) {
-            centroid = new Point3D(
+            centroid = new Coordinate3D(
                     addedValues.getX()/counter,
                     addedValues.getY()/counter,
                     addedValues.getZ()/counter);

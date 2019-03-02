@@ -1,6 +1,6 @@
 package preprocess_data.data_generation;
 
-import javafx.geometry.Point2D;
+import preprocess_data.data_model.Coordinate3D;
 
 //function which decides in which direction the marker can move --> x,y
 //f(x) = coefficient * x ^ exponent
@@ -21,9 +21,9 @@ class DirectionFunction {
         this(stepWidth, coefficient, 1);
     }
 
-    Point2D getNextPosition(int stepCounter) {
+    Coordinate3D getNextPosition(int stepCounter) {
         double newX = stepWidth * stepCounter;
-        return new Point2D(newX, calcY(newX));
+        return new Coordinate3D(newX, calcY(newX),0);
     }
 
     private double calcY(double newX) {
