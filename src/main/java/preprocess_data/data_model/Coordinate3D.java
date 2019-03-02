@@ -28,4 +28,9 @@ public class Coordinate3D {
     public double getZ() {
         return z;
     }
+
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ", " + z + ')';
+    }
 }

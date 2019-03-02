@@ -12,17 +12,17 @@ import java.util.ArrayList;
 public class TrialDataManager {
 
     private final TrialDataTransformation dataTransformer;
-    private final JsonToTrialParser jsonToTrialParser;
+    private final JsonToTrialParser jsonToTrialParser = new JsonToTrialParser();
     private TrialNormalizationStrategy normalizationStrategy;
 
     public TrialDataManager(TrialDataTransformation dataTransformer, TrialNormalizationStrategy normalizationStrategy) {
         this.dataTransformer = dataTransformer;
-        jsonToTrialParser = new JsonToTrialParser(normalizationStrategy);
         this.normalizationStrategy = normalizationStrategy;
     }
 
     public TrialDataManager(TrialDataTransformation dataTransformer) {
-        this(dataTransformer, null);
+        this.dataTransformer = dataTransformer;
+        normalizationStrategy = null;
     }
 
     public ArrayList<ArrayList<Writable>> getTrialDataFromJson(JsonArray trialData) {
@@ -47,7 +47,7 @@ public class TrialDataManager {
     private ArrayList<Frame> getFramesFromJson(JsonArray trialData) {
         final ArrayList<Frame> frames = new ArrayList<Frame>();
         for (JsonElement trialDatum : trialData) {
-            Frame frame = jsonToTrialParser.getFrameFromJson(trialDatum.getAsJsonObject());
+            Frame frame = jsonToTrialParser.getFrameFromJson(trialDatum.getAsJsonObject(), normalizationStrategy);
             frames.add(frame);
         }
         return frames;

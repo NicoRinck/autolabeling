@@ -31,7 +31,6 @@ public class CentroidNormalization implements TrialNormalizationStrategy {
     }
 
     private Marker normalizeMarker(Marker marker) {
-        System.out.println(centroid);
         return new Marker(marker.getLabel(),
                 marker.getX() - centroid.getX(),
                 marker.getY() - centroid.getY(),

@@ -14,19 +14,9 @@ import java.util.TreeSet;
 
 public class JsonToTrialParser {
 
-    private final TrialNormalizationStrategy normalizationStrategy;
     private Set<String> markerLabels;
 
-    //if set normalization strategy collects data for the normalization (loop optimization)
-    public JsonToTrialParser(TrialNormalizationStrategy normalizationStrategy) {
-        this.normalizationStrategy = normalizationStrategy;
-    }
-
-    public JsonToTrialParser() {
-        this(null);
-    }
-
-    Frame getFrameFromJson(JsonObject frameJson) {
+    Frame getFrameFromJson(JsonObject frameJson, TrialNormalizationStrategy normalizationStrategy) {
         //only get labels once
         if (markerLabels == null) {
             markerLabels = getMarkerLabels(frameJson);
@@ -47,7 +37,7 @@ public class JsonToTrialParser {
     }
 
     private Set<String> getMarkerLabels(@NotNull JsonObject sampleObject) {
-        Set<String> labels = new TreeSet<String>();
+        Set<String> labels = new TreeSet<>();
         for (Map.Entry<String, JsonElement> jsonPropertyEntry : sampleObject.entrySet()) {
             int indexOfSeparator = jsonPropertyEntry.getKey().indexOf("_");
             labels.add(jsonPropertyEntry.getKey().substring(0, indexOfSeparator));

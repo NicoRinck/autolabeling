@@ -33,6 +33,8 @@ import preprocess_data.labeling.OneTargetLabeling;
 import java.io.File;
 
 public class TestNormalization {
+    //alle json-dateien besitzen die richtigen marker, allerdings ist in einigen Dateien der Wert für den Marker thrx NAN
+    //dadurch können die bekannten fehler entstehen
 
     public static void main(String[] args) throws Exception {
         String[] allowedFileFormat = {"json"};
@@ -44,10 +46,10 @@ public class TestNormalization {
 
         //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("LELB", 35);
-        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(3);
+        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(20);
         TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization();
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, manipulationStrategy);
-        TrialDataManager trialDataManager = new TrialDataManager(transformation);
+        TrialDataManager trialDataManager = new TrialDataManager(transformation, normalizationStrategy);
 
         //DataSet Iterators
         JsonTrialRecordReader trainDataReader = new JsonTrialRecordReader(trialDataManager);
@@ -93,7 +95,7 @@ public class TestNormalization {
         nn.setListeners(new ScoreIterationListener(10000), evaluativeListener);
 
         //Training
-        nn.fit(trainIterator, 1);
+        nn.fit(trainIterator, 20);
 
         //epochs
         IEvaluation[] evaluations = evaluativeListener.getEvaluations();
@@ -110,15 +112,15 @@ public class TestNormalization {
         }
 
         System.out.println("start evaluation");
-        Evaluation eval = new Evaluation(outputNum);
+        testIterator.reset();
+        Evaluation eval = nn.evaluate(testIterator);
+        System.out.println(eval.stats(false, true));
+
+        //single eval
         testIterator.reset();
         DataSet testData = testIterator.next();
         INDArray features = testData.getFeatures();
         INDArray prediction = nn.output(features);
-        eval.eval(testData.getLabels(), prediction);
-        System.out.println(eval.stats(false, true));
-
-        //single eval
         System.out.println("single eval:");
         Evaluation evaluation = new Evaluation(outputNum);
         eval.eval(testData.getLabels().getRow(0), prediction.getRow(0));
