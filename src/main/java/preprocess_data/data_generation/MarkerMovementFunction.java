@@ -2,9 +2,9 @@ package preprocess_data.data_generation;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
-import preprocess_data.data_model.Marker;
 
-public class MarkerMovementFunction {
+//TODO: refactor --> merge Direction function and this class --> takes only stepwidth from outside --> transform with params for each dimension
+class MarkerMovementFunction {
 
     //3D-function: f(x,y) = coefficientX*x^exponentX + coefficientY*y^exponentY
     private final double coefficientX;

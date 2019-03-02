@@ -17,35 +17,42 @@ import org.nd4j.evaluation.IEvaluation;
 import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.learning.config.Sgd;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import preprocess_data.TrialDataManager;
 import preprocess_data.TrialDataTransformation;
 import preprocess_data.data_manipulaton.FrameDataManipulationStrategy;
 import preprocess_data.data_manipulaton.FrameShuffleManipulator;
+import preprocess_data.data_normalization.CentroidNormalization;
+import preprocess_data.data_normalization.TrialNormalizationStrategy;
 import preprocess_data.labeling.FrameLabelingStrategy;
 import preprocess_data.labeling.OneTargetLabeling;
 
 import java.io.File;
 
-public class TestWithMockData {
+public class TestNormalization {
 
     public static void main(String[] args) throws Exception {
-
         String[] allowedFileFormat = {"json"};
         //Input Data
-        File trainDirectory = new File("C:\\Users\\Nico Rinck\\Desktop\\Daten_Studienarbeit\\mock");
+        File trainDirectory = new File("C:\\Users\\Nico Rinck\\Desktop\\Daten_Studienarbeit\\train");
+        File testDirectory = new File("C:\\Users\\Nico Rinck\\Desktop\\Daten_Studienarbeit\\test");
         FileSplit fileSplitTrain = new FileSplit(trainDirectory, allowedFileFormat);
+        FileSplit fileSplitTest = new FileSplit(testDirectory,allowedFileFormat);
 
         //Strategies/Assets
-        FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("1", 10);
+        FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("LELB", 35);
         FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(20);
+        TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization();
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, manipulationStrategy);
-        TrialDataManager trialDataManager = new TrialDataManager(transformation);
+        TrialDataManager trialDataManager = new TrialDataManager(transformation, normalizationStrategy);
 
         //DataSet Iterators
         JsonTrialRecordReader trainDataReader = new JsonTrialRecordReader(trialDataManager);
+        JsonTrialRecordReader testDataReader = new JsonTrialRecordReader(trialDataManager);
         trainDataReader.initialize(fileSplitTrain);
+        testDataReader.initialize(fileSplitTrain);
 
         //NN Config
         final int numInputs = 30;
@@ -66,23 +73,17 @@ public class TestWithMockData {
 
         //dataset iterator
         RecordReaderDataSetIterator trainIterator = new RecordReaderDataSetIterator(trainDataReader, 50);
+        RecordReaderDataSetIterator testIterator = new RecordReaderDataSetIterator(testDataReader,50);
 
         //Normalization
         /*NormalizerMinMaxScaler normalizerMinMaxScaler = new NormalizerMinMaxScaler(-1, 1);
         normalizerMinMaxScaler.fit(trainIterator);
         trainIterator.setPreProcessor(normalizerMinMaxScaler);*/
 
-        //test data
-        JsonTrialRecordReader testDataReader = new JsonTrialRecordReader(trialDataManager);
-        testDataReader.initialize(fileSplitTrain);
-        RecordReaderDataSetIterator testDataIterator = new RecordReaderDataSetIterator(testDataReader,50000);
-        org.nd4j.linalg.dataset.DataSet testData = testDataIterator.next();
-        testData.shuffle(54342);
-
         //init nn
         MultiLayerNetwork nn = new MultiLayerNetwork(conf);
         nn.init();
-        EvaluativeListener evaluativeListener = new EvaluativeListener(testData,1,InvocationType.EPOCH_END);
+        EvaluativeListener evaluativeListener = new EvaluativeListener(testIterator,1,InvocationType.EPOCH_END);
         nn.setListeners(new ScoreIterationListener(10000), evaluativeListener);
 
         //Training
@@ -90,6 +91,8 @@ public class TestWithMockData {
 
         //Eval (full test data)
         Evaluation evaluation = new Evaluation(10);
+        testIterator.reset();
+        DataSet testData = testIterator.next();
         INDArray features = testData.getFeatures();
         INDArray prediction = nn.output(features);
         evaluation.eval(testData.getLabels(), prediction);
@@ -109,25 +112,5 @@ public class TestWithMockData {
                 }
             }
         }
-
-        //single eval
-        /*System.out.println("single eval:");
-        Evaluation eval = new Evaluation(10);
-        eval.eval(testData.getLabels().getRow(0), prediction.getRow(0));
-        System.out.println(evaluation.stats(false, true));
-        System.out.println("Datensatz 1 --> Features: ");
-        printINDArray(features.getRow(0));
-        System.out.println("Datensatz 1 --> Prediction: ");
-        printINDArray(prediction.getRow(0));
-        System.out.println("geschätzter Wert: ");
-        System.out.println(prediction.getRow(0).maxNumber());*/
-    }
-
-    private static void printINDArray(INDArray indArray) {
-        double[] array = indArray.toDoubleVector();
-        for (int i = 0; i < array.length; i++) {
-            System.out.print((i+1) + ": " + array[i] + " | ");
-        }
-        System.out.println();
     }
 }
