@@ -16,24 +16,26 @@ public class JsonToTrialParser {
 
     private Set<String> markerLabels;
 
-    Frame getFrameFromJson(JsonObject frameJson, TrialNormalizationStrategy normalizationStrategy) {
+    Frame getFrameFromJson(JsonObject frameJson, TrialNormalizationStrategy... normalizationStrategies) {
         //only get labels once
         if (markerLabels == null) {
             markerLabels = getMarkerLabels(frameJson);
         }
-        final ArrayList<Marker> resultList = new ArrayList<Marker>();
+        final ArrayList<Marker> resultList = new ArrayList<>();
         for (String markerLabel : markerLabels) {
-            Marker marker = new Marker(markerLabel,
-                    frameJson.get(markerLabel + "_x").getAsDouble(),
-                    frameJson.get(markerLabel + "_y").getAsDouble(),
-                    frameJson.get(markerLabel + "_z").getAsDouble());
-            if (normalizationStrategy != null) {
-                normalizationStrategy.collectMarkerData(marker); //collect data for normalization
+            Marker marker = getMarkersFromLabel(frameJson, markerLabel);
+            if (normalizationStrategies != null) {
+               collectNormalizationData(marker,normalizationStrategies);
             }
             resultList.add(marker);
         }
-
         return new Frame(resultList);
+    }
+
+    private void collectNormalizationData(Marker marker, TrialNormalizationStrategy[] normalizers) {
+        for (TrialNormalizationStrategy normalizer : normalizers) {
+            normalizer.collectMarkerData(marker);
+        }
     }
 
     private Set<String> getMarkerLabels(@NotNull JsonObject sampleObject) {
@@ -43,5 +45,12 @@ public class JsonToTrialParser {
             labels.add(jsonPropertyEntry.getKey().substring(0, indexOfSeparator));
         }
         return labels;
+    }
+
+    private Marker getMarkersFromLabel(JsonObject frameJson, String markerLabel) {
+        return new Marker(markerLabel,
+                frameJson.get(markerLabel + "_x").getAsDouble(),
+                frameJson.get(markerLabel + "_y").getAsDouble(),
+                frameJson.get(markerLabel + "_z").getAsDouble());
     }
 }
