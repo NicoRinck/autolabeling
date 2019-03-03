@@ -46,8 +46,8 @@ public class TestNormalization {
 
         //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("LELB", 35);
-        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(10);
-        TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization(-100,100);
+        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(20);
+        TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization();
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, manipulationStrategy);
         TrialDataManager trialDataManager = new TrialDataManager(transformation, normalizationStrategy);
 
@@ -75,11 +75,11 @@ public class TestNormalization {
                 .build();
 
         //dataset iterator
-        RecordReaderDataSetIterator trainIterator = new RecordReaderDataSetIterator(trainDataReader, 1);
-        RecordReaderDataSetIterator testIterator = new RecordReaderDataSetIterator(testDataReader,1);
+        RecordReaderDataSetIterator trainIterator = new RecordReaderDataSetIterator(trainDataReader, 20, 105, 35);
+        RecordReaderDataSetIterator testIterator = new RecordReaderDataSetIterator(testDataReader,20, 105,35); //ändert das was?
 
         //Normalization
-       /* int rangeMin = -1;
+    /*    int rangeMin = -1;
         int rangeMax = 1;
         NormalizerMinMaxScaler normalizerMinMaxScaler = new NormalizerMinMaxScaler(rangeMin,rangeMax);
         normalizerMinMaxScaler.fit(trainIterator);
@@ -95,7 +95,7 @@ public class TestNormalization {
         nn.setListeners(new ScoreIterationListener(10000), evaluativeListener);
 
         //Training
-        nn.fit(trainIterator, 1);
+        nn.fit(trainIterator, 5);
 
         //epochs
         IEvaluation[] evaluations = evaluativeListener.getEvaluations();
@@ -118,6 +118,9 @@ public class TestNormalization {
 
         //single eval
         testIterator.reset();
+        for (int i = 0; i < 100; i++) {
+            testIterator.next();
+        }
         DataSet testData = testIterator.next();
         INDArray features = testData.getFeatures();
         INDArray prediction = nn.output(features);
