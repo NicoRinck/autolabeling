@@ -47,7 +47,7 @@ public class TestNormalization {
         //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("LELB", 35);
         FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(10);
-        TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization(-1,1);
+        TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization(-100,100);
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, manipulationStrategy);
         TrialDataManager trialDataManager = new TrialDataManager(transformation, normalizationStrategy);
 
