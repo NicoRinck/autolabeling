@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import preprocess_data.data_model.Frame;
 import preprocess_data.data_model.Marker;
+import preprocess_data.data_normalization.CentroidNormalization;
 import preprocess_data.data_normalization.TrialNormalizationStrategy;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class JsonToTrialParser {
 
     private Set<String> markerLabels;
 
-    Frame getFrameFromJson(JsonObject frameJson, TrialNormalizationStrategy... normalizationStrategies) {
+    Frame getFrameFromJson(JsonObject frameJson, TrialNormalizationStrategy normalizer) {
         //only get labels once
         if (markerLabels == null) {
             markerLabels = getMarkerLabels(frameJson);
@@ -24,18 +25,12 @@ public class JsonToTrialParser {
         final ArrayList<Marker> resultList = new ArrayList<>();
         for (String markerLabel : markerLabels) {
             final Marker marker = getMarkersFromLabel(frameJson, markerLabel);
-            if (normalizationStrategies != null) {
-               collectNormalizationData(marker,normalizationStrategies);
+            if (normalizer != null) {
+               normalizer.collectMarkerData(marker);
             }
             resultList.add(marker);
         }
         return new Frame(resultList);
-    }
-
-    private void collectNormalizationData(Marker marker, TrialNormalizationStrategy[] normalizers) {
-        for (TrialNormalizationStrategy normalizer : normalizers) {
-            normalizer.collectMarkerData(marker);
-        }
     }
 
     private Set<String> getMarkerLabels(@NotNull JsonObject sampleObject) {

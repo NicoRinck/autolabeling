@@ -46,8 +46,8 @@ public class TestNormalization {
 
         //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("LELB", 35);
-        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(20);
-        TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization();
+        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(10);
+        TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization(-1,1);
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, manipulationStrategy);
         TrialDataManager trialDataManager = new TrialDataManager(transformation, normalizationStrategy);
 
@@ -79,14 +79,14 @@ public class TestNormalization {
         RecordReaderDataSetIterator testIterator = new RecordReaderDataSetIterator(testDataReader,1);
 
         //Normalization
-        int rangeMin = -1;
+       /* int rangeMin = -1;
         int rangeMax = 1;
         NormalizerMinMaxScaler normalizerMinMaxScaler = new NormalizerMinMaxScaler(rangeMin,rangeMax);
         normalizerMinMaxScaler.fit(trainIterator);
         trainIterator.setPreProcessor(normalizerMinMaxScaler);
         NormalizerMinMaxScaler normalizerMinMaxScaler1 = new NormalizerMinMaxScaler(rangeMin,rangeMax);
         normalizerMinMaxScaler1.fit(testIterator);
-        testIterator.setPreProcessor(normalizerMinMaxScaler1);
+        testIterator.setPreProcessor(normalizerMinMaxScaler1);*/
 
         //init nn
         MultiLayerNetwork nn = new MultiLayerNetwork(conf);
@@ -95,7 +95,7 @@ public class TestNormalization {
         nn.setListeners(new ScoreIterationListener(10000), evaluativeListener);
 
         //Training
-        nn.fit(trainIterator, 20);
+        nn.fit(trainIterator, 1);
 
         //epochs
         IEvaluation[] evaluations = evaluativeListener.getEvaluations();

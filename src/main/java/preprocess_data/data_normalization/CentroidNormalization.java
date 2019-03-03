@@ -6,11 +6,22 @@ import preprocess_data.data_model.Marker;
 
 import java.util.ArrayList;
 
+//subtract centroid from any marker in trial. If set, all values will be scaled between minValue and maxValue.
+//1. centroid subtraction 2. scale new (subtracted) values
 public class CentroidNormalization implements TrialNormalizationStrategy {
 
-    private final Coordinate3D addedValues = new Coordinate3D(0,0,0);
+    private final Coordinate3D addedValues = new Coordinate3D(0, 0, 0);
+    private final MarkerValueScaler markerValueScaler;
     private int counter = 0;
     private Coordinate3D centroid;
+
+    public CentroidNormalization(int minValue, int maxValue) {
+        this.markerValueScaler = new MarkerValueScaler(minValue, maxValue);
+    }
+
+    public CentroidNormalization() {
+        this.markerValueScaler = null;
+    }
 
     public Frame normalizeFrame(final Frame frame) {
         calculateCentroid();
@@ -23,26 +34,34 @@ public class CentroidNormalization implements TrialNormalizationStrategy {
 
     private void calculateCentroid() {
         if (centroid == null) {
-            centroid = new Coordinate3D(
-                    addedValues.getX()/counter,
-                    addedValues.getY()/counter,
-                    addedValues.getZ()/counter);
+            centroid = new Coordinate3D(addedValues.getX() / counter,
+                    addedValues.getY() / counter,
+                    addedValues.getZ() / counter);
         }
     }
 
     private Marker normalizeMarker(Marker marker) {
-        return new Marker(marker.getLabel(),
-                marker.getX() - centroid.getX(),
+        final Marker normalizedMarker = new Marker(marker.getLabel(), marker.getX() - centroid.getX(),
                 marker.getY() - centroid.getY(),
                 marker.getZ() - centroid.getZ());
+        if (markerValueScaler == null) {
+            return normalizedMarker;
+        }
+        return markerValueScaler.scaleMarker(normalizedMarker, centroid);
     }
 
     public void collectMarkerData(Marker marker) {
-        addedValues.add(marker.getX(),marker.getY(),marker.getZ());
+        if (markerValueScaler != null) {
+            markerValueScaler.collectData(marker);
+        }
+        addedValues.add(marker.getX(), marker.getY(), marker.getZ());
         counter++;
     }
 
     public TrialNormalizationStrategy getNewInstance() {
-        return new CentroidNormalization();
+        if (markerValueScaler == null) {
+            return new CentroidNormalization();
+        }
+        return new CentroidNormalization(markerValueScaler.getMinValue(),markerValueScaler.getMaxValue());
     }
 }
