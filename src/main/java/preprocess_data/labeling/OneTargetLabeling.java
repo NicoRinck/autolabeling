@@ -1,7 +1,6 @@
 package preprocess_data.labeling;
 
 import org.datavec.api.writable.DoubleWritable;
-import org.datavec.api.writable.IntWritable;
 import org.datavec.api.writable.Text;
 import org.datavec.api.writable.Writable;
 import preprocess_data.data_model.Frame;
@@ -29,7 +28,7 @@ public class OneTargetLabeling implements FrameLabelingStrategy {
         int indexOfTarget = -1;
         final ArrayList<Writable> resultList = new ArrayList<Writable>();
         for (int i = 0; i < frame.getMarkers().size(); i++) {
-            Marker currentMarker = frame.getMarkers().get(i);
+            final Marker currentMarker = frame.getMarkers().get(i);
             resultList.add(new DoubleWritable(currentMarker.getX()));
             resultList.add(new DoubleWritable(currentMarker.getY()));
             resultList.add(new DoubleWritable(currentMarker.getZ()));
@@ -43,7 +42,7 @@ public class OneTargetLabeling implements FrameLabelingStrategy {
 
     public List<String> getLabels() {
         if (amountOfLabels > 0) {
-            ArrayList<String> resultList = new ArrayList<String>();
+            final ArrayList<String> resultList = new ArrayList<String>();
             for (int i = 0; i < amountOfLabels; i++) {
                 resultList.add(i + "");
             }
