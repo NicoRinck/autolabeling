@@ -36,7 +36,7 @@ public class OneTargetLabeling implements FrameLabelingStrategy {
                 indexOfTarget = i;
             }
         }
-        resultList.add(new Text(indexOfTarget+""));
+        resultList.add(new Text(indexOfTarget + ""));
         return resultList;
     }
 

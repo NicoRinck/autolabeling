@@ -14,10 +14,17 @@ public class OneTargetDistanceLabeling implements FrameLabelingStrategy {
 
     private final Coordinate3D targetPoint;
     private final String targetLabel;
+    private final int amountOfLabels;
 
     public OneTargetDistanceLabeling(final Coordinate3D targetPoint, String targetLabel) {
         this.targetPoint = targetPoint;
         this.targetLabel = targetLabel;
+        this.amountOfLabels = -1;
+    }
+    public OneTargetDistanceLabeling(final Coordinate3D targetPoint, String targetLabel, int amountOfLabels) {
+        this.targetPoint = targetPoint;
+        this.targetLabel = targetLabel;
+        this.amountOfLabels = amountOfLabels;
     }
 
     public ArrayList<Writable> getLabeledWritableList(Frame frame) {
@@ -26,7 +33,7 @@ public class OneTargetDistanceLabeling implements FrameLabelingStrategy {
         for (int i = 0; i < frame.getMarkers().size(); i++) {
             final double distance = getDistanceToTarget(frame.getMarkers().get(i));
             resultList.add(new DoubleWritable(distance));
-            if(frame.getMarkers().get(i).getLabel().equalsIgnoreCase(targetLabel))  {
+            if (frame.getMarkers().get(i).getLabel().equalsIgnoreCase(targetLabel)) {
                 indexOfTarget = i;
             }
         }
@@ -36,11 +43,18 @@ public class OneTargetDistanceLabeling implements FrameLabelingStrategy {
 
     private double getDistanceToTarget(Marker marker) {
         return Math.sqrt(Math.pow(marker.getX() - targetPoint.getX(), 2)
-                + Math.pow(marker.getX() - targetPoint.getX(),2)
-                + Math.pow(marker.getX() - targetPoint.getX(),2));
+                + Math.pow(marker.getX() - targetPoint.getX(), 2)
+                + Math.pow(marker.getX() - targetPoint.getX(), 2));
     }
 
     public List<String> getLabels() {
+        if (amountOfLabels > 0) {
+            final ArrayList<String> resultList = new ArrayList<String>();
+            for (int i = 0; i < amountOfLabels; i++) {
+                resultList.add(i + "");
+            }
+            return resultList;
+        }
         return null;
     }
 }

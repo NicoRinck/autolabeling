@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class TrialDataManager {
 
     private final TrialDataTransformation dataTransformer;
-    private final JsonToTrialParser jsonToTrialParser = new JsonToTrialParser(normalizer);
+    private final JsonToTrialParser jsonToTrialParser = new JsonToTrialParser();
     private TrialNormalizationStrategy normalizationStrategy;
 
     public TrialDataManager(TrialDataTransformation dataTransformer, TrialNormalizationStrategy normalizationStrategy) {

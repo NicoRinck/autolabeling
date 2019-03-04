@@ -22,7 +22,7 @@ public class JsonToTrialParser {
         if (markerLabels == null) {
             markerLabels = getMarkerLabels(frameJson);
         }
-        final ArrayList<Marker> resultList = new ArrayList<>();
+        final ArrayList<Marker> resultList = new ArrayList<Marker>();
         for (String markerLabel : markerLabels) {
             final Marker marker = getMarkersFromLabel(frameJson, markerLabel);
             if (normalizer != null) {
@@ -34,7 +34,7 @@ public class JsonToTrialParser {
     }
 
     private Set<String> getMarkerLabels(@NotNull JsonObject sampleObject) {
-        final Set<String> labels = new TreeSet<>();
+        final Set<String> labels = new TreeSet<String>();
         for (Map.Entry<String, JsonElement> jsonPropertyEntry : sampleObject.entrySet()) {
             int indexOfSeparator = jsonPropertyEntry.getKey().indexOf("_");
             labels.add(jsonPropertyEntry.getKey().substring(0, indexOfSeparator));
