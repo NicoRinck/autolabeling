@@ -46,7 +46,7 @@ public class TestNormalization {
 
         //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("LELB", 35);
-        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(20);
+        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(30);
         TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization();
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, manipulationStrategy);
         TrialDataManager trialDataManager = new TrialDataManager(transformation, normalizationStrategy);
@@ -75,18 +75,18 @@ public class TestNormalization {
                 .build();
 
         //dataset iterator
-        RecordReaderDataSetIterator trainIterator = new RecordReaderDataSetIterator(trainDataReader, 20, 105, 35);
-        RecordReaderDataSetIterator testIterator = new RecordReaderDataSetIterator(testDataReader,20, 105,35); //ändert das was?
+        RecordReaderDataSetIterator trainIterator = new RecordReaderDataSetIterator(trainDataReader, 20);
+        RecordReaderDataSetIterator testIterator = new RecordReaderDataSetIterator(testDataReader,20); //ändert das was?
 
         //Normalization
-    /*    int rangeMin = -1;
+        int rangeMin = -1;
         int rangeMax = 1;
         NormalizerMinMaxScaler normalizerMinMaxScaler = new NormalizerMinMaxScaler(rangeMin,rangeMax);
         normalizerMinMaxScaler.fit(trainIterator);
         trainIterator.setPreProcessor(normalizerMinMaxScaler);
         NormalizerMinMaxScaler normalizerMinMaxScaler1 = new NormalizerMinMaxScaler(rangeMin,rangeMax);
         normalizerMinMaxScaler1.fit(testIterator);
-        testIterator.setPreProcessor(normalizerMinMaxScaler1);*/
+        testIterator.setPreProcessor(normalizerMinMaxScaler1);
 
         //init nn
         MultiLayerNetwork nn = new MultiLayerNetwork(conf);
@@ -95,21 +95,7 @@ public class TestNormalization {
         nn.setListeners(new ScoreIterationListener(10000), evaluativeListener);
 
         //Training
-        nn.fit(trainIterator, 5);
-
-        //epochs
-        IEvaluation[] evaluations = evaluativeListener.getEvaluations();
-        for (IEvaluation singleEvaluation : evaluations) {
-            String s = singleEvaluation.stats();
-            String[] split = s.split("\n");
-            int i = 0;
-            for (String s1 : split) {
-                if (s1.contains("Accuracy")) {
-                    System.out.println("Präzision über die Epochen:");
-                    System.out.println("Epoche " + i++ + ": " + s1);
-                }
-            }
-        }
+        nn.fit(trainIterator, 1);
 
         System.out.println("start evaluation");
         testIterator.reset();
