@@ -1,4 +1,4 @@
-package deep_learning;
+package deep_learning.tests;
 
 import datavec.JsonTrialRecordReader;
 import org.datavec.api.split.FileSplit;
@@ -13,12 +13,10 @@ import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.api.InvocationType;
 import org.deeplearning4j.optimize.listeners.EvaluativeListener;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
-import org.nd4j.evaluation.IEvaluation;
 import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
-import org.nd4j.linalg.dataset.api.preprocessor.NormalizerMinMaxScaler;
 import org.nd4j.linalg.learning.config.Sgd;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import preprocess_data.TrialDataManager;
@@ -39,15 +37,15 @@ public class TestNormalization {
     public static void main(String[] args) throws Exception {
         String[] allowedFileFormat = {"json"};
         //Input Data
-        File trainDirectory = new File("C:\\Users\\nicor\\Desktop\\Daten_Studienarbeit\\train");
-        File testDirectory = new File("C:\\Users\\nicor\\Desktop\\Daten_Studienarbeit\\test");
+        File trainDirectory = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\train");
+        File testDirectory = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\test");
         FileSplit fileSplitTrain = new FileSplit(trainDirectory, allowedFileFormat);
         FileSplit fileSplitTest = new FileSplit(testDirectory,allowedFileFormat);
 
         //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("LELB", 35);
-        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(30);
-        TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization();
+        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(10);
+        TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization(0,1);
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, manipulationStrategy);
         TrialDataManager trialDataManager = new TrialDataManager(transformation, normalizationStrategy);
 
@@ -65,28 +63,65 @@ public class TestNormalization {
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .activation(Activation.TANH)
-                .weightInit(WeightInit.NORMAL)
-                .updater(new Sgd(0.4))
+                /*.activation(Activation.TANH)
+                .weightInit(WeightInit.XAVIER)*/
+                .updater(new Sgd(0.1))
                 .list()
-                .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(53).build())
-                .layer(1, new DenseLayer.Builder().nIn(53).nOut(35).build())
-                .layer(2, new OutputLayer.Builder(LossFunctions.LossFunction.SQUARED_LOSS).nIn(35).nOut(outputNum).build())
+                .layer(0, new DenseLayer.Builder().
+                        nIn(numInputs).nOut(53).
+                        weightInit(WeightInit.SIGMOID_UNIFORM).
+                        activation(Activation.SIGMOID).build())
+                .layer(1, new DenseLayer.Builder()
+                        .nIn(53).nOut(35)
+                        .weightInit(WeightInit.RELU)
+                        .activation(Activation.LEAKYRELU).build())
+                .layer(2, new DenseLayer.Builder()
+                        .nIn(35).nOut(35)
+                        .weightInit(WeightInit.RELU)
+                        .activation(Activation.LEAKYRELU).build())
+                .layer(3, new DenseLayer.Builder()
+                        .nIn(35).nOut(35)
+                        .weightInit(WeightInit.RELU)
+                        .activation(Activation.LEAKYRELU).build())
+                .layer(4, new DenseLayer.Builder()
+                        .nIn(35).nOut(35)
+                        .weightInit(WeightInit.RELU)
+                        .activation(Activation.LEAKYRELU).build())
+                .layer(5, new DenseLayer.Builder()
+                        .nIn(35).nOut(35)
+                        .weightInit(WeightInit.RELU)
+                        .activation(Activation.LEAKYRELU).build())
+                .layer(6, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
+                        .nIn(35).nOut(outputNum)
+                        .weightInit(WeightInit.NORMAL)
+                        .activation(Activation.SOFTMAX).build())
                 .build();
+                //hidden variieren (RELU)-->mehr layer (RELU)
+                //hidden softmax
+                //nochmal variieren --> Negloglike
+                //bias?
+                //l1,l2 optimierung
+
+                //Tanh, Relu ,Softmax mit MXCENT --> mehr Deep Layer besseres Ergebnis
+                //Softmax --> Hidden --> nein
+                //Relu in den hidden Layer sorgt für stärkeres Lernen einzelner Neuronen im Output
+                        //wenn Lernrate niedriger ist dieser Effekt nicht so start
+                        //Sigmoid verteilt besser, Ergebnisse verbessern sich aber nicht
+                //negloglike kommt mit normal weights besser zurecht als mcxent
 
         //dataset iterator
         RecordReaderDataSetIterator trainIterator = new RecordReaderDataSetIterator(trainDataReader, 20);
         RecordReaderDataSetIterator testIterator = new RecordReaderDataSetIterator(testDataReader,20); //ändert das was?
 
         //Normalization
-        int rangeMin = -1;
+       /* int rangeMin = -1;
         int rangeMax = 1;
         NormalizerMinMaxScaler normalizerMinMaxScaler = new NormalizerMinMaxScaler(rangeMin,rangeMax);
         normalizerMinMaxScaler.fit(trainIterator);
         trainIterator.setPreProcessor(normalizerMinMaxScaler);
         NormalizerMinMaxScaler normalizerMinMaxScaler1 = new NormalizerMinMaxScaler(rangeMin,rangeMax);
         normalizerMinMaxScaler1.fit(testIterator);
-        testIterator.setPreProcessor(normalizerMinMaxScaler1);
+        testIterator.setPreProcessor(normalizerMinMaxScaler1);*/
 
         //init nn
         MultiLayerNetwork nn = new MultiLayerNetwork(conf);
@@ -120,5 +155,6 @@ public class TestNormalization {
         TestV3.printINDArray(prediction.getRow(0));
         System.out.println("geschätzter Wert: ");
         System.out.println(prediction.getRow(0).maxNumber());
+        System.out.println("layerwise config" + nn.getLayerWiseConfigurations().toJson());
     }
 }

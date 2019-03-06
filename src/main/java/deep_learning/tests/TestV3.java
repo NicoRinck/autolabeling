@@ -1,4 +1,4 @@
-package deep_learning;
+package deep_learning.tests;
 
 import datavec.JsonTrialRecordReader;
 import org.datavec.api.split.FileSplit;
