@@ -130,7 +130,7 @@ public class TestNormalization {
         nn.setListeners(new ScoreIterationListener(10000), evaluativeListener);
 
         //Training
-        nn.fit(trainIterator, 1);
+        nn.fit(trainIterator, 2);
 
         System.out.println("start evaluation");
         testIterator.reset();

@@ -1,23 +1,21 @@
 package deep_learning.execution;
 
-import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.nd4j.evaluation.classification.Evaluation;
+import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 
 public class DL4JNetworkExecutor {
 
-    private final RecordReaderDataSetIterator trainData;
-    private final RecordReaderDataSetIterator testData;
+    private final DataSetIterator trainData;
+    private final DataSetIterator testData;
     private final ResultLogger resultLogger;
 
-    public DL4JNetworkExecutor(final RecordReaderDataSetIterator trainData,
-                               final RecordReaderDataSetIterator testData,
-                               final ResultLogger resultLogger) {
+    public DL4JNetworkExecutor(DataSetIterator trainData, DataSetIterator testData, ResultLogger logger) {
         this.trainData = trainData;
         this.testData = testData;
-        this.resultLogger = resultLogger;
+        this.resultLogger = logger;
     }
 
     public void executeAndTrainNetwork(final MultiLayerConfiguration config, int epochs, TrainingListener[] listeners) {
