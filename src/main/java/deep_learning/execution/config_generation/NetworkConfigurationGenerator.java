@@ -24,6 +24,10 @@ public class NetworkConfigurationGenerator {
     //OutputLayer
     //keine VariableValues, sondern Arrays mit einem Element!
 
+    //nächster schritt --> aufsplitten --> Klasse, die die konkreten methdoden zum hinzufügen der Elemente implementiert (vererbung?)
+                    //layer generierung
+                    //finale klasse, die die Generatoren verwendet und n-mal ausführt.
+
 
     //amount of Layers variabel (dense Layer variieren in der Anzahl
     public NetworkConfigurationGenerator(final Integer seed) {
