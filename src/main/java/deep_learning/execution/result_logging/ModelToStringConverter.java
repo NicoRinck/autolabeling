@@ -1,4 +1,4 @@
-package deep_learning.execution;
+package deep_learning.execution.result_logging;
 
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;

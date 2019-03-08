@@ -2,7 +2,7 @@ package deep_learning.tests;
 
 import datavec.JsonTrialRecordReader;
 import deep_learning.execution.DL4JNetworkExecutor;
-import deep_learning.execution.ResultLogger;
+import deep_learning.execution.result_logging.ResultLogger;
 import org.datavec.api.split.FileSplit;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;

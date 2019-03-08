@@ -1,4 +1,4 @@
-package deep_learning.execution;
+package deep_learning.execution.result_logging;
 
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.nd4j.evaluation.classification.Evaluation;
@@ -23,7 +23,7 @@ public class ResultLogger {
                 fileName.substring(0, fileName.lastIndexOf(".")) + "_config.txt");
     }
 
-    void log(MultiLayerNetwork model, Evaluation evaluation) {
+    public void log(MultiLayerNetwork model, Evaluation evaluation) {
         String modelString = modelConverter.modelToString(model);
         System.out.println(model.getLayer(model.getLayers().length-1));
         System.out.println("Model: " + modelString);

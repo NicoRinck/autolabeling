@@ -1,5 +1,6 @@
 package deep_learning.execution;
 
+import deep_learning.execution.result_logging.ResultLogger;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.optimize.api.TrainingListener;

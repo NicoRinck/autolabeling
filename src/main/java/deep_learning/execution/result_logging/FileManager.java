@@ -1,4 +1,4 @@
-package deep_learning.execution;
+package deep_learning.execution.result_logging;
 
 import java.io.*;
 import java.util.ArrayList;
