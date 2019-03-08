@@ -1,4 +1,4 @@
-package deep_learning;
+package deep_learning.tests;
 
 import datavec.JsonTrialRecordReader;
 import org.datavec.api.split.FileSplit;
@@ -45,7 +45,7 @@ public class TestDistanceLabeling {
 
         //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetDistanceLabeling(new Coordinate3D(0,0,0), "LELB", 35);
-        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(30);
+        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(3);
         TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization(-100,100);
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, manipulationStrategy);
         TrialDataManager trialDataManager = new TrialDataManager(transformation, normalizationStrategy);
