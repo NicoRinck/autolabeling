@@ -40,7 +40,7 @@ public class DL4JNetworkExecutor {
     }
 
     private MultiLayerNetwork initModel(final MultiLayerConfiguration config) {
-        final MultiLayerNetwork model = new MultiLayerNetwork(config);
+        final MultiLayerNetwork model = new MultiLayerNetwork(config.clone());
         model.init();
         return model;
     }
