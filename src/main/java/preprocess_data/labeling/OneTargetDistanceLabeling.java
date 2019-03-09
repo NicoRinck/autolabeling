@@ -49,7 +49,7 @@ public class OneTargetDistanceLabeling implements FrameLabelingStrategy {
 
     public List<String> getLabels() {
         if (amountOfLabels > 0) {
-            final ArrayList<String> resultList = new ArrayList<String>();
+            final ArrayList<String> resultList = new ArrayList<>();
             for (int i = 0; i < amountOfLabels; i++) {
                 resultList.add(i + "");
             }
