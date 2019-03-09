@@ -21,7 +21,7 @@ import org.nd4j.linalg.learning.config.Sgd;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import preprocess_data.TrialDataManager;
 import preprocess_data.TrialDataTransformation;
-import preprocess_data.data_manipulaton.FrameDataManipulationStrategy;
+import preprocess_data.data_manipulaton.FrameManipulationStrategy;
 import preprocess_data.data_manipulaton.FrameShuffleManipulator;
 import preprocess_data.labeling.FrameLabelingStrategy;
 import preprocess_data.labeling.OneTargetLabeling;
@@ -39,7 +39,7 @@ public class TestWithMockData {
 
         //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("1", 10);
-        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(20);
+        FrameManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(20);
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, manipulationStrategy);
         TrialDataManager trialDataManager = new TrialDataManager(transformation);
 

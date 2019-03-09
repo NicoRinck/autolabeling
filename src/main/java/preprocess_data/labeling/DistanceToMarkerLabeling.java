@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-//To use this labeling strategy effectively, the frames have to be shuffled. (-> FrameShuffleManipulator)
+//To use this labeling strategy effectively, the frames have to be reordered.
+//--> Always use in Combination with FrameReorderingManipulator
 //If not frame will be labeled with only "1" or only "0". ("1" -> labels == frame.markers, "0" -> labels != frame.markers)
 public class DistanceToMarkerLabeling implements FrameLabelingStrategy {
     //feste Reihenfolge --> ArrayList mit allen Labels müssen reingegeben werden.

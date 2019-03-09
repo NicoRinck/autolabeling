@@ -24,7 +24,7 @@ import org.nd4j.linalg.learning.config.Sgd;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import preprocess_data.TrialDataManager;
 import preprocess_data.TrialDataTransformation;
-import preprocess_data.data_manipulaton.FrameDataManipulationStrategy;
+import preprocess_data.data_manipulaton.FrameManipulationStrategy;
 import preprocess_data.data_manipulaton.FrameShuffleManipulator;
 import preprocess_data.data_model.Coordinate3D;
 import preprocess_data.data_normalization.CentroidNormalization;
@@ -45,7 +45,7 @@ public class TestDistanceLabeling {
 
         //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetDistanceLabeling(new Coordinate3D(0,0,0), "LELB", 35);
-        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(3);
+        FrameManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(3);
         TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization(-100,100);
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, manipulationStrategy);
         TrialDataManager trialDataManager = new TrialDataManager(transformation, normalizationStrategy);

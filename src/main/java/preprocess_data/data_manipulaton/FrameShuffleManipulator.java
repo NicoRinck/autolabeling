@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-public class FrameShuffleManipulator implements FrameDataManipulationStrategy {
+public class FrameShuffleManipulator implements FrameManipulationStrategy {
 
     private final int amountOfShuffles;
     private long seed;
