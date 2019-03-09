@@ -5,7 +5,6 @@ import org.datavec.api.writable.Text;
 import org.datavec.api.writable.Writable;
 import preprocess_data.data_model.Coordinate3D;
 import preprocess_data.data_model.Frame;
-import preprocess_data.data_model.Marker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,7 @@ public class OneTargetDistanceLabeling implements FrameLabelingStrategy {
         final ArrayList<Writable> resultList = new ArrayList<Writable>();
         int indexOfTarget = -1;
         for (int i = 0; i < frame.getMarkers().size(); i++) {
-            final double distance = getDistanceToTarget(frame.getMarkers().get(i));
+            final double distance = DistanceCalculator.getDistanceToCoordinate(frame.getMarkers().get(i),targetPoint);
             resultList.add(new DoubleWritable(distance));
             if (frame.getMarkers().get(i).getLabel().equalsIgnoreCase(targetLabel)) {
                 indexOfTarget = i;
@@ -39,12 +38,6 @@ public class OneTargetDistanceLabeling implements FrameLabelingStrategy {
         }
         resultList.add(new Text(indexOfTarget + ""));
         return resultList;
-    }
-
-    private double getDistanceToTarget(Marker marker) {
-        return Math.sqrt(Math.pow(marker.getX() - targetPoint.getX(), 2)
-                + Math.pow(marker.getX() - targetPoint.getX(), 2)
-                + Math.pow(marker.getX() - targetPoint.getX(), 2));
     }
 
     public List<String> getLabels() {
