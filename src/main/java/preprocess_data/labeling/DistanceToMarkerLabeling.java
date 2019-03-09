@@ -14,8 +14,6 @@ import java.util.List;
 //--> Always use in Combination with FrameReorderingManipulator
 //If not frame will be labeled with only "1" or only "0". ("1" -> labels == frame.markers, "0" -> labels != frame.markers)
 public class DistanceToMarkerLabeling implements FrameLabelingStrategy {
-    //feste Reihenfolge --> ArrayList mit allen Labels müssen reingegeben werden.
-    //Dann nach Reihenfolge der d(1,2) d(1,3) .....
 
     private final String[] labels;
 
@@ -25,7 +23,7 @@ public class DistanceToMarkerLabeling implements FrameLabelingStrategy {
 
     @Override
     public ArrayList<Writable> getLabeledWritableList(Frame frame) {
-        final ArrayList<Writable> resultList = new ArrayList<>();
+        ArrayList<Writable> resultList = new ArrayList<>();
         final ArrayList<Marker> markers = frame.getMarkers();
         boolean hasSameContent = true; //test if order in labels is the same as in frame
         for (int i = 0; i < labels.length; i++) {

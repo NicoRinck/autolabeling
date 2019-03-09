@@ -20,7 +20,6 @@ public class JsonToTrialParser {
         //only get labels once
         if (markerLabels == null) {
             markerLabels = getMarkerLabels(frameJson);
-            markerLabels.forEach(System.out::println);
         }
         final ArrayList<Marker> resultList = new ArrayList<Marker>();
         for (String markerLabel : markerLabels) {

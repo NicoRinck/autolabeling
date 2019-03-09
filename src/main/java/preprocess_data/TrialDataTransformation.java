@@ -19,7 +19,7 @@ public class TrialDataTransformation {
         this.manipulator = manipulator;
     }
 
-    ArrayList<ArrayList<Writable>> transformFrameData(final Frame frame) {
+    public ArrayList<ArrayList<Writable>> transformFrameData(final Frame frame) {
         if (manipulator != null) {
             return converter.convertFramesToListOfWritables(manipulator.manipulateFrame(frame));
         }

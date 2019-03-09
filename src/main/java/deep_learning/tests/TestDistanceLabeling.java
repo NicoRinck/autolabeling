@@ -136,5 +136,6 @@ public class TestDistanceLabeling {
         TestV3.printINDArray(prediction.getRow(0));
         System.out.println("geschätzter Wert: ");
         System.out.println(prediction.getRow(0).maxNumber());
+        System.out.println(nn.getLayerWiseConfigurations());
     }
 }
