@@ -16,6 +16,9 @@ import java.util.List;
 public class DistanceToMarkerLabeling implements FrameLabelingStrategy {
 
     private final String[] labels;
+    private int count1 = 0;
+    private int count0 = 0;
+    private final ArrayList<Writable> resultList = new ArrayList<>();
 
     public DistanceToMarkerLabeling(String[] labels) {
         this.labels = labels;
@@ -23,7 +26,7 @@ public class DistanceToMarkerLabeling implements FrameLabelingStrategy {
 
     @Override
     public ArrayList<Writable> getLabeledWritableList(Frame frame) {
-        ArrayList<Writable> resultList = new ArrayList<>();
+        resultList.clear();
         final ArrayList<Marker> markers = frame.getMarkers();
         boolean hasSameContent = true; //test if order in labels is the same as in frame
         for (int i = 0; i < labels.length; i++) {
@@ -33,15 +36,26 @@ public class DistanceToMarkerLabeling implements FrameLabelingStrategy {
             }
         }
         if (hasSameContent) {
+            count1++;
             resultList.add(new Text("1"));
-            return resultList;
+            return new ArrayList<>(resultList);
         }
+        count0++;
         resultList.add(new Text("0"));
-        return resultList;
+        return new ArrayList<>(resultList);
     }
 
     @Override
     public List<String> getLabels() {
         return Arrays.asList("0", "1");
+    }
+
+    public void logCount() {
+        System.out.println("1: " + this.count1 + ", 0: " + this.count0);
+    }
+
+    public void resetCount() {
+        count0 = 0;
+        count1 = 0;
     }
 }

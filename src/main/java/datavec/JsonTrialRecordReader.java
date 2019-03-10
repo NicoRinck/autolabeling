@@ -53,6 +53,7 @@ public class JsonTrialRecordReader extends BaseRecordReader {
             return fileContentIterator.next();
         }
         else if (fileIterator.hasNext()) {
+            fileContentIterator.remove();
             fileContentIterator = trialDataManager.getTrialDataFromJson(fileIterator.next()).iterator();
             return fileContentIterator.next();
         }
@@ -81,7 +82,6 @@ public class JsonTrialRecordReader extends BaseRecordReader {
         return null;
     }
 
-    //TODO!
     public Record nextRecord() {
         List<Writable> next = next();
         //metadata --> fileIndex/location (get from TrialFileIterator). Closer look: https://github.com/deeplearning4j/DataVec/blob/master/datavec-api/src/main/java/org/datavec/api/records/reader/impl/csv/CSVRecordReader.java

@@ -1,6 +1,5 @@
 package preprocess_data.data_manipulaton;
 
-import org.datavec.api.writable.Writable;
 import preprocess_data.TrialDataTransformation;
 import preprocess_data.data_model.Frame;
 import preprocess_data.data_model.Marker;
@@ -78,15 +77,11 @@ public class FrameReorderingManipulator implements FrameManipulationStrategy {
         String[] orderedLabels2 = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
         DistanceToMarkerLabeling distanceToMarkerLabeling = new DistanceToMarkerLabeling(orderedLabels2);
         TrialDataTransformation trialDataTransformation = new TrialDataTransformation(distanceToMarkerLabeling, frameReorderingManipulator);
-
         for (Frame frame1 : frames) {
-            ArrayList<ArrayList<Writable>> arrayLists = trialDataTransformation.transformFrameData(frame1);
-            System.out.println(arrayLists.size());
-            for (ArrayList<Writable> arrayList : arrayLists) {
-                System.out.println(arrayList.size());
-            }
+            System.out.println("_____________");
+            trialDataTransformation.transformFrameData(frame1).forEach(System.out::println);
+            System.out.println("_____________");
+            System.out.println();
         }
-
-
     }
 }
