@@ -1,26 +1,30 @@
 package preprocess_data.data_manipulaton;
 
-import preprocess_data.TrialDataManager;
-import preprocess_data.TrialDataTransformation;
 import preprocess_data.data_model.Frame;
 import preprocess_data.data_model.Marker;
-import preprocess_data.labeling.DistanceToMarkerLabeling;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class FrameReorderingManipulator implements FrameManipulationStrategy {
 
+    private final ArrayList<String> correctOrder; //in case order in json-files is different
     private final int reorderedFrames;
     private final int originalFrames;
 
-    public FrameReorderingManipulator(int reorderedFrames, int originalFrames) {
+    public FrameReorderingManipulator(int reorderedFrames, int originalFrames, ArrayList<String> correctOrder) {
+        this.correctOrder = correctOrder;
         this.reorderedFrames = reorderedFrames;
         this.originalFrames = originalFrames;
     }
 
+    public FrameReorderingManipulator(int reorderedFrames, int originalFrames) {
+        this(reorderedFrames,originalFrames,null);
+    }
+
     @Override
     public ArrayList<Frame> manipulateFrame(Frame frame) {
+        Frame currentFrame = getOrderedFrame(frame);
         final ArrayList<Frame> resultList = new ArrayList<>();
         for (int i = 0; i < reorderedFrames; i++) {
             final ArrayList<Marker> markers = new ArrayList<>(frame.getMarkers());
@@ -32,5 +36,20 @@ public class FrameReorderingManipulator implements FrameManipulationStrategy {
         }
         Collections.shuffle(resultList);
         return resultList;
+    }
+
+    private Frame getOrderedFrame(Frame frame) {
+        if (correctOrder != null) {
+            ArrayList<Marker> correctMarkers = new ArrayList<>();
+            for (String s : correctOrder) {
+                for (Marker marker : frame.getMarkers()) {
+                    if (marker.getLabel().equalsIgnoreCase(s)) {
+                        correctMarkers.add(marker);
+                    }
+                }
+            }
+            return new Frame(correctMarkers);
+        }
+        return frame;
     }
 }

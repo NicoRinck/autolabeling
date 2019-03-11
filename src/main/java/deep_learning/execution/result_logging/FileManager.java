@@ -3,16 +3,16 @@ package deep_learning.execution.result_logging;
 import java.io.*;
 import java.util.ArrayList;
 
-class FileManager {
+public class FileManager {
 
     private final File file;
     private boolean valid = true;
 
-    FileManager(String filePath) {
+    public FileManager(String filePath) {
         file = createFileIfNotExist(filePath);
     }
 
-    ArrayList<String> getFileContent() {
+    public ArrayList<String> getFileContent() {
         ArrayList<String> resultList = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             while (br.ready()) {
@@ -39,7 +39,7 @@ class FileManager {
         return valid;
     }
 
-    void writeInFile(String content) {
+    public void writeInFile(String content) {
         if (hasValidState()) {
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, true))) {
                 bw.write(content);
