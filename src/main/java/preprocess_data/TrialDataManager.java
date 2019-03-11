@@ -7,10 +7,12 @@ import preprocess_data.data_model.Frame;
 import preprocess_data.data_normalization.TrialNormalizationStrategy;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 //manages json-parsing, normalization and transformation of trial-data
 public class TrialDataManager {
 
+    private Iterator<Frame> frameIterator;
     private final TrialDataTransformation dataTransformer;
     private final JsonToTrialParser jsonToTrialParser = new JsonToTrialParser();
     private TrialNormalizationStrategy normalizationStrategy;
@@ -25,16 +27,20 @@ public class TrialDataManager {
         normalizationStrategy = null;
     }
 
-    public ArrayList<ArrayList<Writable>> getTrialDataFromJson(JsonArray trialData) {
-        final ArrayList<ArrayList<Writable>> resultList = new ArrayList<ArrayList<Writable>>();
-        final ArrayList<Frame> frames = getFramesFromJson(trialData);
-        for (Frame frame : frames) {
-            resultList.addAll(transformFrameToWritable(frame));
-        }
+    public void setTrialContent(JsonArray trialData) {
         if (normalizationStrategy != null) {
             normalizationStrategy = normalizationStrategy.getNewInstance();
         }
-        return resultList;
+        getFramesFromJson(trialData);
+    }
+
+    public ArrayList<ArrayList<Writable>> getNextTrialContent() {
+        final Frame currentFrame = frameIterator.next();
+        return new ArrayList<>(transformFrameToWritable(currentFrame));
+    }
+
+    public boolean hasNext() {
+        return frameIterator.hasNext();
     }
 
     private ArrayList<ArrayList<Writable>> transformFrameToWritable(Frame frame) {
@@ -44,13 +50,13 @@ public class TrialDataManager {
         return dataTransformer.transformFrameData(frame);
     }
 
-    private ArrayList<Frame> getFramesFromJson(JsonArray trialData) {
-        final ArrayList<Frame> frames = new ArrayList<Frame>();
+    private void getFramesFromJson(JsonArray trialData) {
+        final ArrayList<Frame> currentFrames = new ArrayList<>();
         for (JsonElement trialDatum : trialData) {
             Frame frame = jsonToTrialParser.getFrameFromJson(trialDatum.getAsJsonObject(), normalizationStrategy);
-            frames.add(frame);
+            currentFrames.add(frame);
         }
-        return frames;
+        this.frameIterator = currentFrames.iterator();
     }
 
     public TrialDataTransformation getDataTransformer() {

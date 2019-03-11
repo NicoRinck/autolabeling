@@ -51,6 +51,10 @@ public class TestDistanceToMarkerLabeling {
         JsonTrialRecordReader testDataReader = new JsonTrialRecordReader(trialDataManager);
         testDataReader.initialize(fileSplitTest);
 
+        while(trainDataReader.hasNext()) {
+            System.out.println(trainDataReader.next());
+        }
+
         DataSetIterator trainData = new RecordReaderDataSetIterator(trainDataReader,20);
         DataSetIterator testData = new RecordReaderDataSetIterator(testDataReader,20);
 

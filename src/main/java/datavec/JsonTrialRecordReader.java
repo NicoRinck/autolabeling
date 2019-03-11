@@ -41,7 +41,8 @@ public class JsonTrialRecordReader extends BaseRecordReader {
 
     private void initIterators(final FileSplit fileSplit) {
         fileIterator = new TrialFileIterator(fileSplit);
-        fileContentIterator = trialDataManager.getTrialDataFromJson(fileIterator.next()).iterator();
+        trialDataManager.setTrialContent(fileIterator.next());
+        fileContentIterator = trialDataManager.getNextTrialContent().iterator();
     }
 
     public void initialize(Configuration configuration, InputSplit inputSplit) throws IOException, InterruptedException, IllegalArgumentException {
@@ -51,13 +52,14 @@ public class JsonTrialRecordReader extends BaseRecordReader {
     public List<Writable> next() {
         if (fileContentIterator.hasNext()) {
             return fileContentIterator.next();
-        }
-        else if (fileIterator.hasNext()) {
-            fileContentIterator.remove();
-            fileContentIterator = trialDataManager.getTrialDataFromJson(fileIterator.next()).iterator();
+        } else if (trialDataManager.hasNext()) {
+            fileContentIterator = trialDataManager.getNextTrialContent().iterator();
             return fileContentIterator.next();
-        }
-        else {
+        } else if (fileIterator.hasNext()) {
+            trialDataManager.setTrialContent(fileIterator.next());
+            fileContentIterator = trialDataManager.getNextTrialContent().iterator();
+            return fileContentIterator.next();
+        } else {
             throw new NoSuchElementException();
         }
     }
