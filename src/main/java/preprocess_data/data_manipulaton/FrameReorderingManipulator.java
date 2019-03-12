@@ -27,12 +27,12 @@ public class FrameReorderingManipulator implements FrameManipulationStrategy {
         Frame currentFrame = getOrderedFrame(frame);
         final ArrayList<Frame> resultList = new ArrayList<>();
         for (int i = 0; i < reorderedFrames; i++) {
-            final ArrayList<Marker> markers = new ArrayList<>(frame.getMarkers());
+            final ArrayList<Marker> markers = new ArrayList<>(currentFrame.getMarkers());
             Collections.shuffle(markers);
             resultList.add(new Frame(markers));
         }
         for (int i = 0; i < originalFrames; i++) {
-            resultList.add(frame);
+            resultList.add(currentFrame);
         }
         Collections.shuffle(resultList);
         return resultList;

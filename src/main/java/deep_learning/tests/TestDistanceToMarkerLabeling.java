@@ -1,11 +1,8 @@
 package deep_learning.tests;
 
-import com.sun.jna.platform.mac.MacFileUtils;
 import datavec.JsonTrialRecordReader;
-import deep_learning.execution.result_logging.FileManager;
 import org.datavec.api.split.FileSplit;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
@@ -13,6 +10,7 @@ import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.util.ModelSerializer;
 import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -34,10 +32,8 @@ public class TestDistanceToMarkerLabeling {
     public static void main(String[] args) throws Exception {
         String[] allowedFileFormat = {"json"};
         //Input Data
-        File trainDataLog = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\logs\\trainlog.txt");
-        File testDataLog = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\logs\\testlog.txt");
-        File trainDirectory = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\trainData\\trainDistanceSimple");
-        File testDirectory = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\testData\\testDistanceSimple");
+        File trainDirectory = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\trainData\\trainDistance");
+        File testDirectory = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\testData\\testDistance");
         FileSplit fileSplitTrain = new FileSplit(trainDirectory, allowedFileFormat);
         FileSplit fileSplitTest = new FileSplit(testDirectory, allowedFileFormat);
 
@@ -48,7 +44,7 @@ public class TestDistanceToMarkerLabeling {
         String[] orderedLabels2 = {"C7", "CLAV", "LASI", "LELB", "LELBW", "LHUM4", "LHUMA", "LHUMP", "LHUMS", "LRAD", "LSCAP1", "LSCAP2", "LSCAP3", "LSCAP4", "LULN", "RASI", "RELB", "RELBW", "RHUM4", "RHUMA", "RHUMP", "RHUMS", "RRAD", "RSCAP1", "RSCAP2", "RSCAP3", "RSCAP4", "RULN", "SACR", "STRN", "T10", "THRX1", "THRX2", "THRX3", "THRX4"};
         DistanceToMarkerLabeling frameLabelingStrategy = new DistanceToMarkerLabeling(orderedLabels2);
         TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization();
-        FrameReorderingManipulator frameReorderingManipulator = new FrameReorderingManipulator(2, 2);
+        FrameReorderingManipulator frameReorderingManipulator = new FrameReorderingManipulator(5, 2);
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, frameReorderingManipulator);
         TrialDataManager trialDataManager = new TrialDataManager(transformation, normalizationStrategy);
 
@@ -58,36 +54,6 @@ public class TestDistanceToMarkerLabeling {
         JsonTrialRecordReader testDataReader = new JsonTrialRecordReader(trialDataManager);
         testDataReader.initialize(fileSplitTest);
 
-        //log train and testData
-        FileManager trainLog = new FileManager(trainDataLog.getPath());
-        FileManager testLog = new FileManager(testDataLog.getPath());
-
-        int counter = 0;
-        while (trainDataReader.hasNext()) {
-            if (counter % 1000 == 0) {
-                trainLog.writeInFile(trainDataReader.next().toString());
-                trainLog.writeInFile(trainDataReader.next().toString());
-                trainLog.writeInFile(trainDataReader.next().toString());
-                trainLog.writeInFile(trainDataReader.next().toString());
-                trainLog.writeInFile(trainDataReader.next().toString());
-            }
-            counter = counter +5;
-        }
-        counter = 0;
-        while (testDataReader.hasNext()) {
-            if (counter % 1000 == 0) {
-                testLog.writeInFile(testDataReader.next().toString());
-                testLog.writeInFile(testDataReader.next().toString());
-                testLog.writeInFile(testDataReader.next().toString());
-                testLog.writeInFile(testDataReader.next().toString());
-                testLog.writeInFile(testDataReader.next().toString());
-            }
-            counter = counter + 5;
-        }
-
-        trainDataReader.reset();
-        testDataReader.reset();
-
         DataSetIterator trainData = new RecordReaderDataSetIterator(trainDataReader, 20);
         DataSetIterator testData = new RecordReaderDataSetIterator(testDataReader, 20);
 
@@ -95,10 +61,12 @@ public class TestDistanceToMarkerLabeling {
         MultiLayerConfiguration multiLayerConfiguration = new NeuralNetConfiguration.Builder()
                 .seed(234)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .updater(new Sgd(0.1))
+                .updater(new Sgd(0.01))
                 .list()
                 .layer(new DenseLayer.Builder().activation(Activation.SIGMOID).weightInit(WeightInit.SIGMOID_UNIFORM).nIn(595).nOut(119).build())
+                .layer(new DenseLayer.Builder().activation(Activation.SIGMOID).weightInit(WeightInit.SIGMOID_UNIFORM).nIn(119).nOut(119).build())
                 .layer(new DenseLayer.Builder().activation(Activation.SIGMOID).weightInit(WeightInit.SIGMOID_UNIFORM).nIn(119).nOut(17).build())
+                .layer(new DenseLayer.Builder().activation(Activation.SIGMOID).weightInit(WeightInit.SIGMOID_UNIFORM).nIn(17).nOut(17).build())
                 .layer(new OutputLayer.Builder(LossFunctions.LossFunction.SQUARED_LOSS).activation(Activation.SIGMOID).weightInit(WeightInit.SIGMOID_UNIFORM).nIn(17).nOut(2).build())
                 .build();
 
@@ -137,6 +105,20 @@ public class TestDistanceToMarkerLabeling {
         }
         System.out.println(multiLayerNetwork.getLayerWiseConfigurations().toString());
 */
+
+        //save models
+        File modelSaveFile = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\models\\testModel-v1.zip");
+        while(modelSaveFile.exists()) {
+            modelSaveFile = getNextPossibleFile(modelSaveFile);
+        }
+        ModelSerializer.writeModel(multiLayerNetwork,modelSaveFile,true);
     }
 
+    public static File getNextPossibleFile(File currentFile) {
+        String currentPath = currentFile.getPath();
+        int indexOfVersion = currentPath.indexOf("-v");
+        int integer = Integer.valueOf(currentPath.substring(indexOfVersion + 2, currentPath.lastIndexOf(".")));
+        System.out.println(integer);
+        return new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\models\\testModel-v" + ++integer + ".zip");
+    }
 }

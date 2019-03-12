@@ -30,8 +30,8 @@ public class TestAutomaticExecution {
     public static void main(String[] args) throws Exception {
         String[] allowedFileFormat = {"json"};
         //Input Data
-        File trainDirectory = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\train\\04_MH_O2_S2_Abd.json");
-        File testDirectory = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\test\\05_RV_O1_S2_Abd.json");
+        File trainDirectory = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\trainData\\train");
+        File testDirectory = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\testData\\test");
         FileSplit fileSplitTrain = new FileSplit(trainDirectory, allowedFileFormat);
         FileSplit fileSplitTest = new FileSplit(testDirectory, allowedFileFormat);
 
@@ -81,11 +81,6 @@ public class TestAutomaticExecution {
         String logfileDestination = "C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit";
         ResultLogger resultLogger = new ResultLogger(logfileDestination, "logfile.txt");
         DL4JNetworkExecutor networkExecutor = new DL4JNetworkExecutor(trainIterator, testIterator, resultLogger);
-        networkExecutor.executeAndTrainNetwork(conf, 1);
-        networkExecutor.executeAndTrainNetwork(conf, 1);
-        networkExecutor.executeAndTrainNetwork(conf, 1);
-        networkExecutor.executeAndTrainNetwork(conf, 1);
-        networkExecutor.executeAndTrainNetwork(conf, 1);
         networkExecutor.executeAndTrainNetwork(conf, 1);
     }
 }
