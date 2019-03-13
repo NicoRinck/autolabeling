@@ -92,9 +92,9 @@ public class TestDistanceToMarkerLabeling {
             evaluation.eval(test.getLabels().getRow(i), prediction.getRow(i));
             System.out.println(evaluation.stats(false, false));
             System.out.println("Datensatz " + i + " --> Features: ");
-            TestV3.printINDArray(features.getRow(i));
+            Helper.printINDArray(features.getRow(i));
             System.out.println("Datensatz " + i + " --> Prediction: ");
-            TestV3.printINDArray(prediction.getRow(i));
+            Helper.printINDArray(prediction.getRow(i));
             System.out.println("geschätzter Wert: ");
             System.out.println(prediction.getRow(i).maxNumber());
         }
@@ -109,16 +109,8 @@ public class TestDistanceToMarkerLabeling {
         //save models
         File modelSaveFile = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\models\\testModel-v1.zip");
         while(modelSaveFile.exists()) {
-            modelSaveFile = getNextPossibleFile(modelSaveFile);
+            modelSaveFile = Helper.getNextPossibleFile(modelSaveFile);
         }
         ModelSerializer.writeModel(multiLayerNetwork,modelSaveFile,true);
-    }
-
-    public static File getNextPossibleFile(File currentFile) {
-        String currentPath = currentFile.getPath();
-        int indexOfVersion = currentPath.indexOf("-v");
-        int integer = Integer.valueOf(currentPath.substring(indexOfVersion + 2, currentPath.lastIndexOf(".")));
-        System.out.println(integer);
-        return new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\models\\testModel-v" + ++integer + ".zip");
     }
 }

@@ -41,5 +41,6 @@ public class TestAutomaticExecution {
 
         AutomaticConfigExecutor configExecutor = new AutomaticConfigExecutor(trainDirectory, testDirectory, logFile,
                 trialDataManager, 20);
+        configExecutor.executeConfigs(configVariator.getConfigs(),1,2);
     }
 }

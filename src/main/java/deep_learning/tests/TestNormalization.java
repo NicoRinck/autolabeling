@@ -154,9 +154,9 @@ public class TestNormalization {
         eval.eval(testData.getLabels().getRow(0), prediction.getRow(0));
         System.out.println(evaluation.stats(false, true));
         System.out.println("Datensatz 1 --> Features: ");
-        TestV3.printINDArray(features.getRow(0));
+        Helper.printINDArray(features.getRow(0));
         System.out.println("Datensatz 1 --> Prediction: ");
-        TestV3.printINDArray(prediction.getRow(0));
+        Helper.printINDArray(prediction.getRow(0));
         System.out.println("geschätzter Wert: ");
         System.out.println(prediction.getRow(0).maxNumber());
         System.out.println("layerwise config" + nn.getLayerWiseConfigurations().toJson());
