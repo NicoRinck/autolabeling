@@ -50,4 +50,9 @@ public class OneTargetLabeling implements FrameLabelingStrategy {
         }
         return null;
     }
+
+    @Override
+    public String getInfoString() {
+        return null;
+    }
 }

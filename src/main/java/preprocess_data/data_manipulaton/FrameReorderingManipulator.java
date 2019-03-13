@@ -38,6 +38,14 @@ public class FrameReorderingManipulator implements FrameManipulationStrategy {
         return resultList;
     }
 
+    @Override
+    public String getInfoString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        correctOrder.forEach(s -> stringBuilder.append(s).append(", "));
+        return "FrameReorderingManipulator(reorderedFrames: " + reorderedFrames + ", originalFrames: " + originalFrames
+                + ", originalOrder: "  + stringBuilder.toString();
+    }
+
     private Frame getOrderedFrame(Frame frame) {
         if (correctOrder != null) {
             ArrayList<Marker> correctMarkers = new ArrayList<>();

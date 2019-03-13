@@ -29,4 +29,9 @@ public class TrialDataTransformation {
     public FrameConverter getConverter() {
         return converter;
     }
+
+    public String getInfoString() {
+        return "Manipulation: " + manipulator.getInfoString() +
+                "\nLabeling: " + converter.getFrameLabelingStrategy().getInfoString();
+    }
 }

@@ -64,4 +64,9 @@ public class CentroidNormalization implements TrialNormalizationStrategy {
         }
         return new CentroidNormalization(markerValueScaler.getMinValue(),markerValueScaler.getMaxValue());
     }
+
+    @Override
+    public String getInfoString() {
+        return null;
+    }
 }

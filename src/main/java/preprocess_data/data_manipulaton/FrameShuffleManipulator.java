@@ -32,6 +32,11 @@ public class FrameShuffleManipulator implements FrameManipulationStrategy {
         return resultFrames;
     }
 
+    @Override
+    public String getInfoString() {
+        return null;
+    }
+
     private Frame getShuffledFrame(Frame frame) {
         ArrayList<Marker> newList = new ArrayList<Marker>(frame.getMarkers());
         if (hasSeed) {
@@ -41,4 +46,6 @@ public class FrameShuffleManipulator implements FrameManipulationStrategy {
         Collections.shuffle(newList);
         return new Frame(newList);
     }
+
+
 }

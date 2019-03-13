@@ -8,8 +8,8 @@ public class FileManager {
     private final File file;
     private boolean valid = true;
 
-    public FileManager(String filePath) {
-        file = createFileIfNotExist(filePath);
+    public FileManager(File file) {
+        this.file = createFileIfNotExist(file);
     }
 
     public ArrayList<String> getFileContent() {
@@ -24,8 +24,7 @@ public class FileManager {
         }
         return resultList;
     }
-    private File createFileIfNotExist(String filePath) {
-        File file = new File(filePath);
+    private File createFileIfNotExist(File file) {
         if (!file.exists()) {
             try {
                 this.valid = file.createNewFile();

@@ -62,4 +62,9 @@ public class TrialDataManager {
     public TrialDataTransformation getDataTransformer() {
         return dataTransformer;
     }
+
+    public String getInfoString() {
+        return dataTransformer.getInfoString() + "\n"
+                + "Normalisierung: " + normalizationStrategy.getInfoString();
+    }
 }

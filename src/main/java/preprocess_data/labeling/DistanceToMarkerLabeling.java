@@ -50,6 +50,11 @@ public class DistanceToMarkerLabeling implements FrameLabelingStrategy {
         return Arrays.asList("0", "1");
     }
 
+    @Override
+    public String getInfoString() {
+        return null;
+    }
+
     public void logCount() {
         System.out.println("1: " + this.count1 + ", 0: " + this.count0);
     }

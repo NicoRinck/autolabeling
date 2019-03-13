@@ -2,7 +2,9 @@ package deep_learning.execution.result_logging;
 
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.nd4j.evaluation.classification.Evaluation;
+import preprocess_data.TrialDataManager;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -17,10 +19,10 @@ public class ResultLogger {
     private int modelCounter = 0;
     private String currentModelLine = "";
 
-    public ResultLogger(String filePath, String fileName) {
-        this.logFileManager = new FileManager(filePath + "\\" + fileName);
-        this.configFileManager = new FileManager(filePath + "\\" +
-                fileName.substring(0, fileName.lastIndexOf(".")) + "_config.txt");
+    public ResultLogger(File file) {
+        this.logFileManager = new FileManager(file);
+        this.configFileManager = new FileManager(new File(file.getParent()
+                + file.getName().substring(0, file.getName().lastIndexOf(".")) + "_config.txt"));
     }
 
     public void log(MultiLayerNetwork model, Evaluation evaluation) {
@@ -34,9 +36,9 @@ public class ResultLogger {
             configFileManager.writeInFile(model.getDefaultConfiguration().toJson());
             currentModelLine = modelString;
             System.out.println(currentModelLine);
+            System.out.println(getEvaluationLogString(evaluation));
         }
         logFileManager.writeInFile(getEvaluationLogString(evaluation));
-
     }
 
     private String getEvaluationLogString(Evaluation evaluation) {
@@ -85,5 +87,10 @@ public class ResultLogger {
 
     private String getNetworkConfig(int index) {
         return configFileManager.getFileContent().get(index);
+    }
+
+    public void logDataInfo(TrialDataManager dataManager) {
+        logFileManager.writeInFile("\n ----------------------------- \n");
+        logFileManager.writeInFile(dataManager.getInfoString());
     }
 }
