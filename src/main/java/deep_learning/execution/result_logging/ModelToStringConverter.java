@@ -6,21 +6,21 @@ import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 class ModelToStringConverter {
 
     String modelToString(MultiLayerNetwork model) {
-        StringBuilder result = new StringBuilder(formatString("Evaluationen",model.getEpochCount()));
+        StringBuilder result = new StringBuilder(formatString("Evaluationen", model.getEpochCount()));
         result.append(formatString("Lernrate", model.getLearningRate(0)));
         result.append(formatString("Optimierung", model.getLayerWiseConfigurations().getConf(0).getOptimizationAlgo().toString()));
-        result.append(formatString("Updater", getLayerProperty(model.getLayer(0).toString(),"iUpdater")));
+        result.append(formatString("Updater", getLayerProperty(model.getLayer(0).toString(), "iUpdater")));
         for (Layer layer : model.getLayers()) {
             String layerString = layer.toString();
             result.append("\n   Layer: [");
-            result.append(formatString("Typ",getLayerProperty(layerString, "(layer")));
-            result.append(formatString("Inputs",getLayerProperty(layerString, "nIn")));
-            result.append(formatString("Neuronen",getLayerProperty(layerString, "nOut")));
+            result.append(formatString("Typ", getLayerProperty(layerString, "(layer")));
+            result.append(formatString("Inputs", getLayerProperty(layerString, "nIn")));
+            result.append(formatString("Neuronen", getLayerProperty(layerString, "nOut")));
             if (layerString.contains("OutputLayer")) {
-                result.append(formatString("Kostenfunktion", getLayerProperty(layerString,"lossFn")));
+                result.append(formatString("Kostenfunktion", getLayerProperty(layerString, "lossFn")));
             }
-            result.append(formatString("Aktivierung",getLayerProperty(layerString, "activationFn")));
-            result.append(formatString("Gewichte",getLayerProperty(layerString, "weightInit"),true));
+            result.append(formatString("Aktivierung", getLayerProperty(layerString, "activationFn")));
+            result.append(formatString("Gewichte", getLayerProperty(layerString, "weightInit"), true));
             result.append("], ");
         }
         return result.toString();
@@ -35,7 +35,7 @@ class ModelToStringConverter {
     }
 
     private String formatString(String propertyLabel, Object propertyValue) {
-        return formatString(propertyLabel,propertyValue,false);
+        return formatString(propertyLabel, propertyValue, false);
     }
 
     private String getLayerProperty(String layerString, String property) {

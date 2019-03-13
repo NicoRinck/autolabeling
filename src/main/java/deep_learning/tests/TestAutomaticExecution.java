@@ -3,6 +3,7 @@ package deep_learning.tests;
 import deep_learning.execution.AutomaticConfigExecutor;
 import deep_learning.execution.config_generation.ConfigVariator;
 import deep_learning.execution.config_generation.LayerConfigVariator;
+import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.nd4j.linalg.learning.config.IUpdater;
 import org.nd4j.linalg.learning.config.Sgd;
 import preprocess_data.TrialDataManager;
@@ -25,7 +26,7 @@ public class TestAutomaticExecution {
 
         //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("LELB", 35);
-        FrameManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(1);
+        FrameManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(2);
         TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization(0, 1);
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, manipulationStrategy);
         TrialDataManager trialDataManager = new TrialDataManager(transformation, normalizationStrategy);
@@ -42,5 +43,7 @@ public class TestAutomaticExecution {
         AutomaticConfigExecutor configExecutor = new AutomaticConfigExecutor(trainDirectory, testDirectory, logFile,
                 trialDataManager, 20);
         configExecutor.executeConfigs(configVariator.getConfigs(),1,2);
+
+
     }
 }

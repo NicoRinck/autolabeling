@@ -1,6 +1,5 @@
 package deep_learning.execution.config_generation;
 
-import deep_learning.execution.DL4JNetworkExecutor;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;

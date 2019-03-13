@@ -3,11 +3,17 @@ package deep_learning.execution.result_logging;
 import org.datavec.api.split.FileSplit;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.nd4j.evaluation.classification.Evaluation;
+import org.nd4j.linalg.dataset.api.DataSetPreProcessor;
+import org.nd4j.linalg.dataset.api.preprocessor.AbstractDataSetNormalizer;
+import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
+import org.nd4j.linalg.dataset.api.preprocessor.NormalizerMinMaxScaler;
 import preprocess_data.TrialDataManager;
 
+import javax.xml.crypto.Data;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class ResultLogger {
@@ -105,5 +111,10 @@ public class ResultLogger {
         }
         String testOrTrain = file.getPath().contains("train") ? "train" : "test";
         logFileManager.writeInFile(testOrTrain + "-Files:\n" + builder.toString());
+    }
+
+    public void logNormalizer(NormalizerMinMaxScaler normalizer) {
+        logFileManager.writeInFile("\nDL4JNormalization: NormalizerMinMaxScaler(minRange: "
+                + normalizer.getTargetMin() + ", maxRange: " + normalizer.getTargetMax() + "\n");
     }
 }

@@ -38,8 +38,8 @@ public class TestDistanceLabeling {
     public static void main(String[] args) throws Exception {
         String[] allowedFileFormat = {"json"};
         //Input Data
-        File trainDirectory = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\train");
-        File testDirectory = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\test");
+        File trainDirectory = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\trainData\\train");
+        File testDirectory = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\testData\\test");
         FileSplit fileSplitTrain = new FileSplit(trainDirectory, allowedFileFormat);
         FileSplit fileSplitTest = new FileSplit(testDirectory,allowedFileFormat);
 

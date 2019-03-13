@@ -18,6 +18,7 @@ import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
+import org.nd4j.linalg.dataset.api.preprocessor.NormalizerMinMaxScaler;
 import org.nd4j.linalg.learning.config.Sgd;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import preprocess_data.TrialDataManager;
@@ -118,14 +119,14 @@ public class TestNormalization {
         RecordReaderDataSetIterator testIterator = new RecordReaderDataSetIterator(testDataReader,20); //ändert das was?
 
         //Normalization
-       /* int rangeMin = -1;
+        int rangeMin = -1;
         int rangeMax = 1;
         NormalizerMinMaxScaler normalizerMinMaxScaler = new NormalizerMinMaxScaler(rangeMin,rangeMax);
         normalizerMinMaxScaler.fit(trainIterator);
         trainIterator.setPreProcessor(normalizerMinMaxScaler);
         NormalizerMinMaxScaler normalizerMinMaxScaler1 = new NormalizerMinMaxScaler(rangeMin,rangeMax);
         normalizerMinMaxScaler1.fit(testIterator);
-        testIterator.setPreProcessor(normalizerMinMaxScaler1);*/
+        testIterator.setPreProcessor(normalizerMinMaxScaler1);
 
         //init nn
         MultiLayerNetwork nn = new MultiLayerNetwork(conf);

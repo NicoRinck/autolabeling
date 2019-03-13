@@ -8,7 +8,8 @@ import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.nd4j.evaluation.classification.Evaluation;
-import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
+import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
+import org.nd4j.linalg.dataset.api.preprocessor.NormalizerMinMaxScaler;
 import preprocess_data.TrialDataManager;
 
 import java.io.File;
@@ -19,14 +20,40 @@ public class AutomaticConfigExecutor {
 
     private static final String[] ALLOWED_FILE_FORMAT = {"json"};
     private final RecordReaderDataSetIterator trainIterator;
-    private final DataSetIterator testIterator;
+    private final RecordReaderDataSetIterator testIterator;
     private final ResultLogger resultLogger;
     private final ArrayList<TrainingListener> listeners = new ArrayList<>();
+
+    public AutomaticConfigExecutor(File train, File test, File logFile, TrialDataManager dataManager, int batchSize,
+                                   NormalizerMinMaxScaler normalizer) throws IOException, InterruptedException, InstantiationException, IllegalAccessException {
+        this(train, test, logFile, dataManager, batchSize);
+        addPreProcessors(normalizer,trainIterator);
+        addPreProcessors(normalizer,testIterator);
+        this.resultLogger.logNormalizer(normalizer);
+    }
+
+    private void addPreProcessors(DataNormalization normalizer, RecordReaderDataSetIterator iterator) throws IllegalAccessException, InstantiationException {
+        DataNormalization normalizerCopy = normalizer.getClass().newInstance();
+        normalizer.fit(iterator);
+        iterator.setPreProcessor(normalizerCopy);
+    }
 
     public AutomaticConfigExecutor(File train, File test, File logFile, TrialDataManager dataManager, int batchSize) throws IOException, InterruptedException {
         this.resultLogger = new ResultLogger(logFile);
         this.trainIterator = initIterator(train, dataManager, batchSize);
+        System.out.println(trainIterator.next().asList().size());
+        System.out.println(trainIterator.next().toString());
+        System.out.println(trainIterator.next().toString());
+        System.out.println(trainIterator.next().toString());
+        System.out.println(trainIterator.next().toString());
+        System.out.println(trainIterator.next().toString());
         this.testIterator = initIterator(test, dataManager, batchSize);
+        System.out.println(testIterator.next().asList().size());
+        System.out.println(testIterator.next().toString());
+        System.out.println(testIterator.next().toString());
+        System.out.println(testIterator.next().toString());
+        System.out.println(testIterator.next().toString());
+        System.out.println(testIterator.next().toString());
         this.resultLogger.logDataInfo(dataManager, batchSize);
     }
 
@@ -44,17 +71,19 @@ public class AutomaticConfigExecutor {
 
     public void executeConfigs(ArrayList<MultiLayerConfiguration> configs, int epochsPerExecution, int repeats) {
 
-        final DL4JNetworkExecutor networkExecutor = new DL4JNetworkExecutor(trainIterator);
+        final DL4JNetworkTrainer networkExecutor = new DL4JNetworkTrainer(trainIterator);
         for (MultiLayerConfiguration config : configs) {
             trainAndEvaluateNetwork(config, repeats, epochsPerExecution, networkExecutor);
         }
     }
 
-    private void trainAndEvaluateNetwork(MultiLayerConfiguration config, int repeats, int epoch, DL4JNetworkExecutor executor) {
+    private void trainAndEvaluateNetwork(MultiLayerConfiguration config, int repeats, int epoch, DL4JNetworkTrainer executor) {
         for (int i = 0; i < repeats; i++) {
-            MultiLayerNetwork multiLayerNetwork = executor.executeAndTrainNetwork(config, epoch);
+            MultiLayerNetwork multiLayerNetwork = executor.trainNetwork(config, epoch);
             Evaluation evaluation = multiLayerNetwork.evaluate(testIterator);
-            resultLogger.log(multiLayerNetwork,evaluation);
+            resultLogger.log(multiLayerNetwork, evaluation);
+            testIterator.reset();
+            trainIterator.reset();
         }
     }
 }
