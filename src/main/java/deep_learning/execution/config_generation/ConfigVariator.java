@@ -29,9 +29,4 @@ public class ConfigVariator {
     public ArrayList<MultiLayerConfiguration> getConfigs() {
         return configGenerator.getConfigs(layerConfigVariator.getLayerVariants());
     }
-
-    public void executeVariations(int iterations, DL4JNetworkExecutor executor) {
-        ArrayList<MultiLayerConfiguration> configs = configGenerator.getConfigs(layerConfigVariator.getLayerVariants());
-        System.out.println(configs.size());
-    }
 }

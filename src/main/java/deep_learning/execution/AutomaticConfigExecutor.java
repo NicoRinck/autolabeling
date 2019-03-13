@@ -19,7 +19,7 @@ public class AutomaticConfigExecutor {
 
     private static final String[] ALLOWED_FILE_FORMAT = {"json"};
     private final TrialDataManager dataManager;
-    private final DataSetIterator trainIterator;
+    private final RecordReaderDataSetIterator trainIterator;
     private final DataSetIterator testIterator;
     private final ResultLogger resultLogger;
     private final ArrayList<TrainingListener> listeners = new ArrayList<>();
@@ -29,11 +29,14 @@ public class AutomaticConfigExecutor {
         this.testIterator = initIterator(test, dataManager, batchSize);
         this.dataManager = dataManager;
         this.resultLogger = new ResultLogger(logFile);
+        this.resultLogger.logDataInfo(dataManager);
     }
 
     private RecordReaderDataSetIterator initIterator(File file, TrialDataManager trialDataManager, int batchSize) throws IOException, InterruptedException {
         JsonTrialRecordReader recordReader = new JsonTrialRecordReader(trialDataManager);
-        recordReader.initialize(new FileSplit(file, ALLOWED_FILE_FORMAT));
+        FileSplit fileSplit = new FileSplit(file, ALLOWED_FILE_FORMAT);
+        this.resultLogger.logFiles(fileSplit, file);
+        recordReader.initialize(fileSplit);
         return new RecordReaderDataSetIterator(recordReader, batchSize);
     }
 
@@ -47,7 +50,6 @@ public class AutomaticConfigExecutor {
         for (MultiLayerConfiguration config : configs) {
             trainAndEvaluateNetwork(config, repeats, epochsPerExecution, networkExecutor);
         }
-        resultLogger.logDataInfo(dataManager);
 
     }
 

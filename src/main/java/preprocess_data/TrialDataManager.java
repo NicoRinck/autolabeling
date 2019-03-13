@@ -65,6 +65,6 @@ public class TrialDataManager {
 
     public String getInfoString() {
         return dataTransformer.getInfoString() + "\n"
-                + "Normalisierung: " + normalizationStrategy.getInfoString();
+                + "Normalisierung: " + normalizationStrategy.toString();
     }
 }

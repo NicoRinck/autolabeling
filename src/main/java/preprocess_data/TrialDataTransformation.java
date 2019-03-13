@@ -31,7 +31,7 @@ public class TrialDataTransformation {
     }
 
     public String getInfoString() {
-        return "Manipulation: " + manipulator.getInfoString() +
-                "\nLabeling: " + converter.getFrameLabelingStrategy().getInfoString();
+        return "Manipulation: " + manipulator.toString() +
+                "\nLabeling: " + converter.getFrameLabelingStrategy().toString();
     }
 }
