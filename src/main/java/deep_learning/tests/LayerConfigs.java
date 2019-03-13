@@ -47,11 +47,16 @@ public class LayerConfigs {
     }
 
     static OutputLayer[] getOutputLayersFromIndexes(int... indexes){
-        return (OutputLayer[]) getLayers(OUTPUT_LAYERS, indexes);
+        Layer[] layers = getLayers(OUTPUT_LAYERS, indexes);
+        OutputLayer[] resultList = new OutputLayer[layers.length];
+        for (int i = 0; i < layers.length; i++) {
+            resultList[i] = (OutputLayer) layers[i];
+        }
+        return resultList;
     }
 
     private static Layer[] getLayers(Layer[] layers, int[] indexes) {
-        Layer[] resultLayers = new Layer[indexes.length];
+        final Layer[] resultLayers = new Layer[indexes.length];
         for (int i = 0; i < indexes.length; i++) {
             resultLayers[i] = layers[indexes[i]];
         }

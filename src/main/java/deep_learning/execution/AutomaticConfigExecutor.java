@@ -18,17 +18,15 @@ import java.util.ArrayList;
 public class AutomaticConfigExecutor {
 
     private static final String[] ALLOWED_FILE_FORMAT = {"json"};
-    private final TrialDataManager dataManager;
     private final RecordReaderDataSetIterator trainIterator;
     private final DataSetIterator testIterator;
     private final ResultLogger resultLogger;
     private final ArrayList<TrainingListener> listeners = new ArrayList<>();
 
     public AutomaticConfigExecutor(File train, File test, File logFile, TrialDataManager dataManager, int batchSize) throws IOException, InterruptedException {
+        this.resultLogger = new ResultLogger(logFile);
         this.trainIterator = initIterator(train, dataManager, batchSize);
         this.testIterator = initIterator(test, dataManager, batchSize);
-        this.dataManager = dataManager;
-        this.resultLogger = new ResultLogger(logFile);
         this.resultLogger.logDataInfo(dataManager, batchSize);
     }
 
@@ -59,5 +57,4 @@ public class AutomaticConfigExecutor {
             resultLogger.log(multiLayerNetwork,evaluation);
         }
     }
-
 }

@@ -80,8 +80,8 @@ public class TestDistanceLabeling {
         RecordReaderDataSetIterator trainIterator = new RecordReaderDataSetIterator(trainDataReader, 20);
         RecordReaderDataSetIterator testIterator = new RecordReaderDataSetIterator(testDataReader,20);
         DataSet next = trainIterator.next();
-        TestV3.printINDArray(next.getFeatures().getRow(0));
-        TestV3.printINDArray(next.getLabels().getRow(0));
+        Helper.printINDArray(next.getFeatures().getRow(0));
+        Helper.printINDArray(next.getLabels().getRow(0));
 
         //Normalization
         int rangeMin = -1;
@@ -131,9 +131,9 @@ public class TestDistanceLabeling {
         eval.eval(testData.getLabels().getRow(0), prediction.getRow(0));
         System.out.println(evaluation.stats(false, true));
         System.out.println("Datensatz 1 --> Features: ");
-        TestV3.printINDArray(features.getRow(0));
+        Helper.printINDArray(features.getRow(0));
         System.out.println("Datensatz 1 --> Prediction: ");
-        TestV3.printINDArray(prediction.getRow(0));
+        Helper.printINDArray(prediction.getRow(0));
         System.out.println("geschätzter Wert: ");
         System.out.println(prediction.getRow(0).maxNumber());
         System.out.println(nn.getLayerWiseConfigurations());
