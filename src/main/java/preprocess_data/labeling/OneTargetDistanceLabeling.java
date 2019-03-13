@@ -52,7 +52,8 @@ public class OneTargetDistanceLabeling implements FrameLabelingStrategy {
     }
 
     @Override
-    public String getInfoString() {
-        return null;
+    public String toString() {
+        return "OneTargetDistanceLabeling(targetPoint: " + targetPoint.toString() + ", targetlabel: " + targetLabel +
+                ", amountOfLabels: " +  amountOfLabels + ")";
     }
 }

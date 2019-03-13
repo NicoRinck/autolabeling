@@ -8,6 +8,4 @@ public interface FrameManipulationStrategy {
 
     //takes frame and returns one or more manipulated instances of it
     ArrayList<Frame> manipulateFrame(Frame frame);
-
-    String getInfoString();
 }

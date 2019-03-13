@@ -12,6 +12,4 @@ public interface TrialNormalizationStrategy {
 
     //returns new instance of the strategy to reset values and calculations
     TrialNormalizationStrategy getNewInstance();
-
-    String getInfoString();
 }

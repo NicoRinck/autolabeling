@@ -12,6 +12,4 @@ public interface FrameLabelingStrategy {
     ArrayList<Writable> getLabeledWritableList(Frame frame);
 
     List<String> getLabels();
-
-    String getInfoString();
 }

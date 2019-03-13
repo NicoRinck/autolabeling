@@ -39,11 +39,11 @@ public class FrameReorderingManipulator implements FrameManipulationStrategy {
     }
 
     @Override
-    public String getInfoString() {
+    public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         correctOrder.forEach(s -> stringBuilder.append(s).append(", "));
         return "FrameReorderingManipulator(reorderedFrames: " + reorderedFrames + ", originalFrames: " + originalFrames
-                + ", originalOrder: "  + stringBuilder.toString();
+                + ", originalOrder: "  + stringBuilder.toString() + ")";
     }
 
     private Frame getOrderedFrame(Frame frame) {

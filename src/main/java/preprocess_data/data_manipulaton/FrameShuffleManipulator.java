@@ -33,8 +33,8 @@ public class FrameShuffleManipulator implements FrameManipulationStrategy {
     }
 
     @Override
-    public String getInfoString() {
-        return null;
+    public String toString() {
+       return "FrameShuffleManipulator(amountOfShuffles: " + amountOfShuffles + ")";
     }
 
     private Frame getShuffledFrame(Frame frame) {

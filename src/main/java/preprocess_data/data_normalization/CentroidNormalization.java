@@ -66,7 +66,11 @@ public class CentroidNormalization implements TrialNormalizationStrategy {
     }
 
     @Override
-    public String getInfoString() {
-        return null;
+    public String toString() {
+        if (this.markerValueScaler == null) {
+            return "CentroidNormalization()";
+        }
+        return "CentroidNormalization(minValue: " + markerValueScaler.getMinValue() + ", maxValue: "
+                + markerValueScaler.getMaxValue() + ")";
     }
 }
