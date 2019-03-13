@@ -29,7 +29,7 @@ public class AutomaticConfigExecutor {
         this.testIterator = initIterator(test, dataManager, batchSize);
         this.dataManager = dataManager;
         this.resultLogger = new ResultLogger(logFile);
-        this.resultLogger.logDataInfo(dataManager);
+        this.resultLogger.logDataInfo(dataManager, batchSize);
     }
 
     private RecordReaderDataSetIterator initIterator(File file, TrialDataManager trialDataManager, int batchSize) throws IOException, InterruptedException {
@@ -50,7 +50,6 @@ public class AutomaticConfigExecutor {
         for (MultiLayerConfiguration config : configs) {
             trainAndEvaluateNetwork(config, repeats, epochsPerExecution, networkExecutor);
         }
-
     }
 
     private void trainAndEvaluateNetwork(MultiLayerConfiguration config, int repeats, int epoch, DL4JNetworkExecutor executor) {

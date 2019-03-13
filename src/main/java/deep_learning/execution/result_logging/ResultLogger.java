@@ -91,9 +91,11 @@ public class ResultLogger {
         return configFileManager.getFileContent().get(index);
     }
 
-    public void logDataInfo(TrialDataManager dataManager) {
+    public void logDataInfo(TrialDataManager dataManager, int batchSize) {
         logFileManager.writeInFile("\n ----------------------------- \n");
         logFileManager.writeInFile(dataManager.getInfoString());
+        logFileManager.writeInFile("\nBatchsize: " + batchSize);
+        logFileManager.writeInFile("\n ----------------------------- \n");
     }
 
     public void logFiles(FileSplit fileSplit, File file) {
@@ -103,6 +105,6 @@ public class ResultLogger {
         }
         String testOrTrain = file.getPath().contains("train") ? "train" : "test";
         logFileManager.writeInFile(testOrTrain + "-Files:\n" + builder.toString());
-        logFileManager.writeInFile("--------------------------");
+        logFileManager.writeInFile("\n ----------------------------- \n");
     }
 }
