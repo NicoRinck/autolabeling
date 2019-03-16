@@ -3,24 +3,14 @@ package deep_learning.execution.result_logging;
 import org.datavec.api.split.FileSplit;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.nd4j.evaluation.classification.Evaluation;
-import org.nd4j.linalg.dataset.api.DataSetPreProcessor;
-import org.nd4j.linalg.dataset.api.preprocessor.AbstractDataSetNormalizer;
-import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.NormalizerMinMaxScaler;
 import preprocess_data.TrialDataManager;
 
-import javax.xml.crypto.Data;
 import java.io.File;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
 public class ResultLogger {
 
-    private static final String MODEL_LINE_PREFIX = "MultiLayerConfiguration ";
-    private static final String LAYER_LINE_PREFIX = "   Label: ";
-    private static final String RESULT_LINE_PREFIX = "       Ergebnis: ";
     private final FileManager logFileManager;
     private final FileManager configFileManager;
     private final ModelToStringConverter modelConverter = new ModelToStringConverter();
@@ -29,7 +19,11 @@ public class ResultLogger {
 
     public ResultLogger(File file) {
         this.logFileManager = new FileManager(file);
-        this.configFileManager = new FileManager(new File(file.getParent() + "\\"
+        this.configFileManager = getConfigFileManager(file);
+    }
+
+    static FileManager getConfigFileManager(File file) {
+        return new FileManager(new File(file.getParent() + "\\"
                 + file.getName().substring(0, file.getName().lastIndexOf(".")) + "_config.txt"));
     }
 
@@ -40,7 +34,8 @@ public class ResultLogger {
         System.out.println(evaluation.stats(false, true));
         if (!modelString.equalsIgnoreCase(currentModelLine)) {
             modelCounter++;
-            logFileManager.writeInFile("\n" + MODEL_LINE_PREFIX + modelCounter + "--> " + modelString);
+            logFileManager.writeInFile("\n" + LinePrefixes.MODEL_LINE_PREFIX.getLinePrefix()
+                    + modelCounter + "--> " + modelString);
             configFileManager.writeInFile(model.getDefaultConfiguration().toJson());
             currentModelLine = modelString;
             System.out.println(currentModelLine);
@@ -50,51 +45,7 @@ public class ResultLogger {
     }
 
     private String getEvaluationLogString(Evaluation evaluation) {
-        return "\n" + RESULT_LINE_PREFIX + evaluation.accuracy();
-    }
-
-    HashMap<Integer, ArrayList<Double>> getModelIndexAndResults() {
-        HashMap<Integer, ArrayList<Double>> resultMap = new HashMap<>();
-        ArrayList<String> lines = logFileManager.getFileContent();
-        for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).substring(0, MODEL_LINE_PREFIX.length()).equalsIgnoreCase(MODEL_LINE_PREFIX)) {
-                ArrayList<String> modelResultsLines = getNextLinesFromPrefix(i, lines, RESULT_LINE_PREFIX);
-                ArrayList<Double> modelResults = new ArrayList<>();
-                modelResultsLines.forEach(d -> modelResults.add(Double.valueOf(d)));
-                resultMap.put(i, modelResults);
-                i += modelResults.size();
-            }
-        }
-        return resultMap;
-    }
-
-    private ArrayList<String> getNextLinesFromPrefix(int currentIndex, ArrayList<String> lines, String prefix) {
-        ArrayList<String> resultList = new ArrayList<>();
-        while (lines.get(++currentIndex).contains(prefix)) {
-            String line = lines.get(currentIndex);
-            resultList.add(line.substring(prefix.length()));
-        }
-        return resultList;
-    }
-
-
-    private String getModelString(int index) {
-        ArrayList<String> fileContent = logFileManager.getFileContent();
-        for (int i = 0; i < fileContent.size(); i++) {
-            if (fileContent.get(i).contains(MODEL_LINE_PREFIX + index)) {
-                StringBuilder result = new StringBuilder(fileContent.get(i));
-                ArrayList<String> nextLinesFromPrefix = getNextLinesFromPrefix(i, fileContent, LAYER_LINE_PREFIX);
-                for (String linesFromPrefix : nextLinesFromPrefix) {
-                    result.append(linesFromPrefix);
-                }
-                return result.toString();
-            }
-        }
-        return "";
-    }
-
-    private String getNetworkConfig(int index) {
-        return configFileManager.getFileContent().get(index);
+        return "\n" + LinePrefixes.RESULT_LINE_PREFIX.getLinePrefix() + evaluation.accuracy();
     }
 
     public void logDataInfo(TrialDataManager dataManager, int batchSize) {

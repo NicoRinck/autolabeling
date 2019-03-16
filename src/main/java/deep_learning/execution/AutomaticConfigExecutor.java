@@ -41,19 +41,7 @@ public class AutomaticConfigExecutor {
     public AutomaticConfigExecutor(File train, File test, File logFile, TrialDataManager dataManager, int batchSize) throws IOException, InterruptedException {
         this.resultLogger = new ResultLogger(logFile);
         this.trainIterator = initIterator(train, dataManager, batchSize);
-        System.out.println(trainIterator.next().asList().size());
-        System.out.println(trainIterator.next().toString());
-        System.out.println(trainIterator.next().toString());
-        System.out.println(trainIterator.next().toString());
-        System.out.println(trainIterator.next().toString());
-        System.out.println(trainIterator.next().toString());
         this.testIterator = initIterator(test, dataManager, batchSize);
-        System.out.println(testIterator.next().asList().size());
-        System.out.println(testIterator.next().toString());
-        System.out.println(testIterator.next().toString());
-        System.out.println(testIterator.next().toString());
-        System.out.println(testIterator.next().toString());
-        System.out.println(testIterator.next().toString());
         this.resultLogger.logDataInfo(dataManager, batchSize);
     }
 
@@ -76,7 +64,7 @@ public class AutomaticConfigExecutor {
             trainAndEvaluateNetwork(config, repeats, epochsPerExecution, networkExecutor);
         }
     }
-
+    
     private void trainAndEvaluateNetwork(MultiLayerConfiguration config, int repeats, int epoch, DL4JNetworkTrainer executor) {
         for (int i = 0; i < repeats; i++) {
             MultiLayerNetwork multiLayerNetwork = executor.trainNetwork(config, epoch);
