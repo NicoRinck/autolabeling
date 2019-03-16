@@ -27,8 +27,8 @@ public class AutomaticConfigExecutor {
     public AutomaticConfigExecutor(File train, File test, File logFile, TrialDataManager dataManager, int batchSize,
                                    NormalizerMinMaxScaler normalizer) throws IOException, InterruptedException, InstantiationException, IllegalAccessException {
         this(train, test, logFile, dataManager, batchSize);
-        addPreProcessors(normalizer,trainIterator);
-        addPreProcessors(normalizer,testIterator);
+        addPreProcessors(normalizer, trainIterator);
+        addPreProcessors(normalizer, testIterator);
         this.resultLogger.logNormalizer(normalizer);
     }
 
@@ -58,13 +58,14 @@ public class AutomaticConfigExecutor {
     }
 
     public void executeConfigs(ArrayList<MultiLayerConfiguration> configs, int epochsPerExecution, int repeats) {
-
         final DL4JNetworkTrainer networkExecutor = new DL4JNetworkTrainer(trainIterator);
-        for (MultiLayerConfiguration config : configs) {
-            trainAndEvaluateNetwork(config, repeats, epochsPerExecution, networkExecutor);
+        for (int i = 0; i < configs.size(); i++) {
+            System.out.println("Konfiguration " + (i + 1) + "/" + configs.size());
+            trainAndEvaluateNetwork(configs.get(i), repeats, epochsPerExecution, networkExecutor);
+
         }
     }
-    
+
     private void trainAndEvaluateNetwork(MultiLayerConfiguration config, int repeats, int epoch, DL4JNetworkTrainer executor) {
         for (int i = 0; i < repeats; i++) {
             MultiLayerNetwork multiLayerNetwork = executor.trainNetwork(config, epoch);
