@@ -36,13 +36,11 @@ class ConfigGenerator {
     }
 
     private MultiLayerConfiguration getConfigWithLayers(NeuralNetConfiguration.Builder builder, ArrayList<Layer> layers) {
-        System.out.println(builder);
         NeuralNetConfiguration.ListBuilder listBuilder = builder.list();
         for (Layer layer : layers) {
             Layer layerCopy = layer.clone();
             listBuilder.layer(layerCopy);
         }
-        System.out.println(listBuilder.build().toString());
         return listBuilder.build();
     }
 

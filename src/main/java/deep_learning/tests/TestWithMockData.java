@@ -79,7 +79,7 @@ public class TestWithMockData {
         org.nd4j.linalg.dataset.DataSet testData = testDataIterator.next();
         testData.shuffle(54342);
 
-        //init nn
+        //smallDataNegRange nn
         MultiLayerNetwork nn = new MultiLayerNetwork(conf);
         nn.init();
         EvaluativeListener evaluativeListener = new EvaluativeListener(testData,1,InvocationType.EPOCH_END);

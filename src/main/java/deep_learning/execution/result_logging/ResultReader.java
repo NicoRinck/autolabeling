@@ -17,13 +17,14 @@ public class ResultReader {
     public HashMap<Integer, ArrayList<Double>> getModelIndexAndResults() {
         HashMap<Integer, ArrayList<Double>> resultMap = new HashMap<>();
         ArrayList<String> lines = logFileManager.getFileContent();
+        int modelIndex = 0;
         for (int i = 0; i < lines.size(); i++) {
             if (hasCertainPrefix(lines.get(i), LinePrefixes.MODEL_LINE_PREFIX.getLinePrefix())) {
                 final ArrayList<String> modelResultsLines = getNextLinesFromPrefix(i, lines,
                         LinePrefixes.RESULT_LINE_PREFIX.getLinePrefix());
                 final ArrayList<Double> modelResults = new ArrayList<>();
                 modelResultsLines.forEach(d -> modelResults.add(Double.valueOf(d)));
-                resultMap.put(i, modelResults);
+                resultMap.put(modelIndex++, modelResults);
                 i += modelResults.size();
             }
         }

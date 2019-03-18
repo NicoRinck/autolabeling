@@ -14,8 +14,6 @@ public class LayerConfigs {
             new DenseLayer.Builder().nIn(105).nOut(55).activation(Activation.TANH).weightInit(WeightInit.NORMAL).build(),
             new DenseLayer.Builder().nIn(105).nOut(55).activation(Activation.TANH).weightInit(WeightInit.XAVIER).build(),
             new DenseLayer.Builder().nIn(105).nOut(55).activation(Activation.RELU).weightInit(WeightInit.RELU).build()};
-
-
     public static final Layer[] HIDDEN_LAYERS = {
             new DenseLayer.Builder().nIn(55).nOut(55).activation(Activation.SIGMOID).weightInit(WeightInit.SIGMOID_UNIFORM).build(),
             new DenseLayer.Builder().nIn(55).nOut(55).activation(Activation.RELU).weightInit(WeightInit.RELU_UNIFORM).build(),
