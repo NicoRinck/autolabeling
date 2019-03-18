@@ -51,7 +51,7 @@ public class ResultLogger {
     public void logDataInfo(TrialDataManager dataManager, int batchSize) {
         logFileManager.writeInFile("allgemeine Konfigurationen");
         logFileManager.writeInFile(dataManager.getInfoString());
-        logFileManager.writeInFile("\nBatchsize: " + batchSize);
+        logFileManager.writeInFile("\nBatchsize: " + batchSize + "\n");
         logFileManager.writeInFile("----------------------------- \n");
     }
 

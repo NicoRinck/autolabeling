@@ -14,15 +14,14 @@ public class ResultReader {
         this.configFileManager = ResultLogger.getConfigFileManager(logFile);
     }
 
-    HashMap<Integer, ArrayList<Double>> getModelIndexAndResults() {
+    public HashMap<Integer, ArrayList<Double>> getModelIndexAndResults() {
         HashMap<Integer, ArrayList<Double>> resultMap = new HashMap<>();
         ArrayList<String> lines = logFileManager.getFileContent();
         for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).substring(0, LinePrefixes.MODEL_LINE_PREFIX.getLinePrefix().length())
-                    .equalsIgnoreCase(LinePrefixes.MODEL_LINE_PREFIX.getLinePrefix())) {
-                ArrayList<String> modelResultsLines = getNextLinesFromPrefix(i, lines,
+            if (hasCertainPrefix(lines.get(i), LinePrefixes.MODEL_LINE_PREFIX.getLinePrefix())) {
+                final ArrayList<String> modelResultsLines = getNextLinesFromPrefix(i, lines,
                         LinePrefixes.RESULT_LINE_PREFIX.getLinePrefix());
-                ArrayList<Double> modelResults = new ArrayList<>();
+                final ArrayList<Double> modelResults = new ArrayList<>();
                 modelResultsLines.forEach(d -> modelResults.add(Double.valueOf(d)));
                 resultMap.put(i, modelResults);
                 i += modelResults.size();
@@ -32,15 +31,21 @@ public class ResultReader {
     }
 
     private ArrayList<String> getNextLinesFromPrefix(int currentIndex, ArrayList<String> lines, String prefix) {
-        ArrayList<String> resultList = new ArrayList<>();
-        while (lines.get(++currentIndex).contains(prefix)) {
-            String line = lines.get(currentIndex);
-            resultList.add(line.substring(prefix.length()));
+        final ArrayList<String> resultList = new ArrayList<>();
+        boolean notNextModelLine = true;
+        while (notNextModelLine && currentIndex < lines.size()-1) {
+            String line = lines.get(++currentIndex);
+            if (line.contains(LinePrefixes.RESULT_LINE_PREFIX.getLinePrefix())) {
+                resultList.add(line.substring(prefix.length()));
+            }
+            if (hasCertainPrefix(line, LinePrefixes.MODEL_LINE_PREFIX.getLinePrefix())) {
+                notNextModelLine = false;
+            }
         }
         return resultList;
     }
 
-    private String getModelString(int index) {
+    public String getModelString(int index) {
         ArrayList<String> fileContent = logFileManager.getFileContent();
         for (int i = 0; i < fileContent.size(); i++) {
             if (fileContent.get(i).contains(LinePrefixes.MODEL_LINE_PREFIX.getLinePrefix() + index)) {
@@ -56,7 +61,15 @@ public class ResultReader {
         return "";
     }
 
-    private String getNetworkConfig(int index) {
+    public String getNetworkConfig(int index) {
         return configFileManager.getFileContent().get(index);
+    }
+
+    private boolean hasCertainPrefix(String line, String prefix) {
+        return line.length() >= prefix.length() && lineStartsWithPrefix(line, prefix);
+    }
+
+    private boolean lineStartsWithPrefix(String line, String prefix) {
+        return line.substring(0, prefix.length()).equalsIgnoreCase(prefix);
     }
 }

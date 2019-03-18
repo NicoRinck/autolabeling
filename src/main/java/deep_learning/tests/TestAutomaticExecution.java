@@ -22,12 +22,12 @@ public class TestAutomaticExecution {
     public static void main(String[] args) throws Exception {
         File trainDirectory = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\trainData\\trainDistanceSimple");
         File testDirectory = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\testData\\testDistanceSimple");
-        File logFile = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\logs\\logFile-v1.txt");
+        File logFile = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\logs\\logFile(noRange)-v1.txt");
 
         //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("LELB", 35);
         FrameManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(5);
-        TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization(0, 1);
+        TrialNormalizationStrategy normalizationStrategy = new CentroidNormalization();
         TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy, manipulationStrategy);
         TrialDataManager trialDataManager = new TrialDataManager(transformation, normalizationStrategy);
 
@@ -40,8 +40,9 @@ public class TestAutomaticExecution {
         IUpdater[] updaters = {new Sgd(0.1), new Sgd(0.01), new Sgd(0.001)};
         configVariator.addUpdater(updaters);
 
-        AutomaticConfigExecutor configExecutor = new AutomaticConfigExecutor(trainDirectory, testDirectory, logFile,
-                trialDataManager, 20);
-        configExecutor.executeConfigs(configVariator.getConfigs(), 1, 3);
+        /*AutomaticConfigExecutor configExecutor = new AutomaticConfigExecutor(trainDirectory, testDirectory, logFile,
+                trialDataManager, 20);*/
+        configVariator.getConfigs().forEach(configuration -> System.out.println(configuration.toString().substring(configuration.toString().indexOf("learningRate")+15,configuration.toString().indexOf("learningRate")+20)));
+        /*configExecutor.executeConfigs(configVariator.getConfigs(), 1, 3);*/
     }
 }
