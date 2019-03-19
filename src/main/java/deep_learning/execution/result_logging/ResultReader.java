@@ -36,7 +36,7 @@ public class ResultReader {
         boolean notNextModelLine = true;
         while (notNextModelLine && currentIndex < lines.size()-1) {
             String line = lines.get(++currentIndex);
-            if (line.contains(LinePrefixes.RESULT_LINE_PREFIX.getLinePrefix())) {
+            if (line.contains(prefix)) {
                 resultList.add(line.substring(prefix.length()));
             }
             if (hasCertainPrefix(line, LinePrefixes.MODEL_LINE_PREFIX.getLinePrefix())) {
@@ -60,10 +60,6 @@ public class ResultReader {
             }
         }
         return "";
-    }
-
-    public String getNetworkConfig(int index) {
-        return configFileManager.getFileContent().get(index);
     }
 
     private boolean hasCertainPrefix(String line, String prefix) {

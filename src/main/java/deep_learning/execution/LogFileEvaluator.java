@@ -20,7 +20,7 @@ public class LogFileEvaluator {
         HashMap<Integer, ArrayList<Double>> results = resultReader.getModelIndexAndResults();
         for (Integer integer : results.keySet()) {
             if (minimalAccuracy < Collections.max(results.get(integer))) {
-                resultList.add(resultReader.getNetworkConfig(integer));
+                resultList.add(resultReader.getModelString(integer));
             }
         }
         return resultList;
