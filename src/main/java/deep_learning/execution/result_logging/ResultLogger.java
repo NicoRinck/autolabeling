@@ -36,7 +36,8 @@ public class ResultLogger {
             modelCounter++;
             logFileManager.writeInFile("\n" + LinePrefixes.MODEL_LINE_PREFIX.getLinePrefix()
                     + modelCounter + "--> " + modelString);
-            configFileManager.writeInFile(model.getLayerWiseConfigurations().toJson() + LinePrefixes.CONFIG_SEPARATOR);
+            configFileManager.writeInFile(model.getLayerWiseConfigurations().toJson() + "\n"
+                    + LinePrefixes.CONFIG_SEPARATOR + "\n");
             currentModelLine = modelString;
             System.out.println(currentModelLine);
             System.out.println(getEvaluationLogString(evaluation));
