@@ -18,9 +18,10 @@ public class LogFileEvaluator {
     public ArrayList<String> getBestModelConfigs(double minimalAccuracy) {
         ArrayList<String> resultList = new ArrayList<>();
         HashMap<Integer, ArrayList<Double>> results = resultReader.getModelIndexAndResults();
+        ArrayList<String> modelJSONList = resultReader.getModelJSON();
         for (Integer integer : results.keySet()) {
             if (minimalAccuracy < Collections.max(results.get(integer))) {
-                resultList.add(resultReader.getModelString(integer));
+                resultList.add(modelJSONList.get(integer));
             }
         }
         return resultList;

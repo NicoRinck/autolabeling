@@ -1,5 +1,7 @@
 package deep_learning.execution.result_logging;
 
+import org.mapdb.Atomic;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +36,7 @@ public class ResultReader {
     private ArrayList<String> getNextLinesFromPrefix(int currentIndex, ArrayList<String> lines, String prefix) {
         final ArrayList<String> resultList = new ArrayList<>();
         boolean notNextModelLine = true;
-        while (notNextModelLine && currentIndex < lines.size()-1) {
+        while (notNextModelLine && currentIndex < lines.size() - 1) {
             String line = lines.get(++currentIndex);
             if (line.contains(prefix)) {
                 resultList.add(line.substring(prefix.length()));
@@ -60,6 +62,21 @@ public class ResultReader {
             }
         }
         return "";
+    }
+
+    public ArrayList<String> getModelJSON() {
+        final ArrayList<String> fileContent = configFileManager.getFileContent();
+        final ArrayList<String> resultList = new ArrayList<>();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String s: fileContent) {
+            if (!s.contains(LinePrefixes.CONFIG_SEPARATOR.getLinePrefix())) {
+                stringBuilder.append(s);
+            } else {
+                resultList.add(stringBuilder.toString());
+                stringBuilder = new StringBuilder();
+            }
+        }
+        return resultList;
     }
 
     private boolean hasCertainPrefix(String line, String prefix) {

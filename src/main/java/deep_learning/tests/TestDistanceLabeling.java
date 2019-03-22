@@ -93,7 +93,7 @@ public class TestDistanceLabeling {
         normalizerMinMaxScaler1.fit(testIterator);
         testIterator.setPreProcessor(normalizerMinMaxScaler1);
 
-        //smallDataNegRange nn
+        //smallDataSetNegRange nn
         MultiLayerNetwork nn = new MultiLayerNetwork(conf);
         nn.init();
         EvaluativeListener evaluativeListener = new EvaluativeListener(testIterator,1,InvocationType.EPOCH_END);
