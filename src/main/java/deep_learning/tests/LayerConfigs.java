@@ -10,28 +10,27 @@ import org.nd4j.linalg.lossfunctions.LossFunctions;
 public class LayerConfigs {
 
     public static final Layer[] INPUT_LAYERS = {
-            new DenseLayer.Builder().nIn(105).nOut(55).activation(Activation.SIGMOID).weightInit(WeightInit.SIGMOID_UNIFORM).build(),
-            new DenseLayer.Builder().nIn(105).nOut(55).activation(Activation.TANH).weightInit(WeightInit.NORMAL).build(),
-            new DenseLayer.Builder().nIn(105).nOut(55).activation(Activation.TANH).weightInit(WeightInit.XAVIER).build(),
-            new DenseLayer.Builder().nIn(105).nOut(55).activation(Activation.RELU).weightInit(WeightInit.RELU).build()};
+            new DenseLayer.Builder().nIn(105).nOut(35).activation(Activation.SIGMOID).weightInit(WeightInit.SIGMOID_UNIFORM).build(),
+            new DenseLayer.Builder().nIn(105).nOut(35).activation(Activation.TANH).weightInit(WeightInit.NORMAL).build(),
+            new DenseLayer.Builder().nIn(105).nOut(35).activation(Activation.TANH).weightInit(WeightInit.XAVIER).build(),
+            new DenseLayer.Builder().nIn(105).nOut(35).activation(Activation.RELU).weightInit(WeightInit.RELU).build()};
     public static final Layer[] HIDDEN_LAYERS = {
-            new DenseLayer.Builder().nIn(55).nOut(55).activation(Activation.SIGMOID).weightInit(WeightInit.SIGMOID_UNIFORM).build(),
-            new DenseLayer.Builder().nIn(55).nOut(55).activation(Activation.RELU).weightInit(WeightInit.RELU_UNIFORM).build(),
-            new DenseLayer.Builder().nIn(55).nOut(55).activation(Activation.RELU).weightInit(WeightInit.RELU).build(),
-            new DenseLayer.Builder().nIn(55).nOut(55).activation(Activation.LEAKYRELU).weightInit(WeightInit.RELU_UNIFORM).build(),
-            new DenseLayer.Builder().nIn(55).nOut(55).activation(Activation.LEAKYRELU).weightInit(WeightInit.RELU).build(),
-            new DenseLayer.Builder().nIn(55).nOut(55).activation(Activation.TANH).weightInit(WeightInit.NORMAL).build(),
-            new DenseLayer.Builder().nIn(55).nOut(55).activation(Activation.TANH).weightInit(WeightInit.XAVIER).build(),
-            new DenseLayer.Builder().nIn(55).nOut(55).activation(Activation.TANH).weightInit(WeightInit.XAVIER_UNIFORM).build()};
-
+            new DenseLayer.Builder().nIn(35).nOut(35).activation(Activation.SIGMOID).weightInit(WeightInit.SIGMOID_UNIFORM).build(),
+            new DenseLayer.Builder().nIn(35).nOut(35).activation(Activation.RELU).weightInit(WeightInit.RELU_UNIFORM).build(),
+            new DenseLayer.Builder().nIn(35).nOut(35).activation(Activation.RELU).weightInit(WeightInit.RELU).build(),
+            new DenseLayer.Builder().nIn(35).nOut(35).activation(Activation.LEAKYRELU).weightInit(WeightInit.RELU_UNIFORM).build(),
+            new DenseLayer.Builder().nIn(35).nOut(35).activation(Activation.LEAKYRELU).weightInit(WeightInit.RELU).build(),
+            new DenseLayer.Builder().nIn(35).nOut(35).activation(Activation.TANH).weightInit(WeightInit.NORMAL).build(),
+            new DenseLayer.Builder().nIn(35).nOut(35).activation(Activation.TANH).weightInit(WeightInit.XAVIER).build(),
+            new DenseLayer.Builder().nIn(35).nOut(35).activation(Activation.TANH).weightInit(WeightInit.XAVIER_UNIFORM).build()};
     public static final OutputLayer[] OUTPUT_LAYERS = {
-            new OutputLayer.Builder(LossFunctions.LossFunction.SQUARED_LOSS).nIn(55).nOut(35).activation(Activation.SIGMOID).weightInit(WeightInit.SIGMOID_UNIFORM).build(),
-            new OutputLayer.Builder(LossFunctions.LossFunction.SQUARED_LOSS).nIn(55).nOut(35).activation(Activation.SOFTMAX).weightInit(WeightInit.XAVIER_UNIFORM).build(),
-            new OutputLayer.Builder(LossFunctions.LossFunction.SQUARED_LOSS).nIn(55).nOut(35).activation(Activation.SOFTMAX).weightInit(WeightInit.XAVIER).build(),
-            new OutputLayer.Builder(LossFunctions.LossFunction.MSE).nIn(55).nOut(35).activation(Activation.SOFTMAX).weightInit(WeightInit.XAVIER).build(),
-            new OutputLayer.Builder(LossFunctions.LossFunction.MCXENT).nIn(55).nOut(35).activation(Activation.SOFTMAX).weightInit(WeightInit.XAVIER).build(),
-            new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD).nIn(55).nOut(35).activation(Activation.SOFTMAX).weightInit(WeightInit.XAVIER).build(),
-            new OutputLayer.Builder(LossFunctions.LossFunction.MEAN_SQUARED_LOGARITHMIC_ERROR).nIn(55).nOut(35).activation(Activation.SOFTMAX).weightInit(WeightInit.XAVIER).build()};
+            new OutputLayer.Builder(LossFunctions.LossFunction.SQUARED_LOSS).nIn(35).nOut(35).activation(Activation.SIGMOID).weightInit(WeightInit.SIGMOID_UNIFORM).build(),
+            new OutputLayer.Builder(LossFunctions.LossFunction.SQUARED_LOSS).nIn(35).nOut(35).activation(Activation.SOFTMAX).weightInit(WeightInit.XAVIER_UNIFORM).build(),
+            new OutputLayer.Builder(LossFunctions.LossFunction.SQUARED_LOSS).nIn(35).nOut(35).activation(Activation.SOFTMAX).weightInit(WeightInit.XAVIER).build(),
+            new OutputLayer.Builder(LossFunctions.LossFunction.MSE).nIn(35).nOut(35).activation(Activation.SOFTMAX).weightInit(WeightInit.XAVIER).build(),
+            new OutputLayer.Builder(LossFunctions.LossFunction.MCXENT).nIn(35).nOut(35).activation(Activation.SOFTMAX).weightInit(WeightInit.XAVIER).build(),
+            new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD).nIn(35).nOut(35).activation(Activation.SOFTMAX).weightInit(WeightInit.XAVIER).build(),
+            new OutputLayer.Builder(LossFunctions.LossFunction.MEAN_SQUARED_LOGARITHMIC_ERROR).nIn(35).nOut(35).activation(Activation.SOFTMAX).weightInit(WeightInit.XAVIER).build()};
 
     public static Layer[] getInputLayersFromIndexes(int... indexes) {
         return getLayers(INPUT_LAYERS, indexes);
