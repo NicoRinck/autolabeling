@@ -1,4 +1,4 @@
-package deep_learning;
+package deep_learning.tests;
 
 import datavec.JsonTrialRecordReader;
 import org.datavec.api.split.FileSplit;
@@ -16,11 +16,9 @@ import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.learning.config.Sgd;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
-import preprocess_data.EuclideanDistanceNormalizer;
-import preprocess_data.JsonToTrialParser;
 import preprocess_data.TrialDataManager;
 import preprocess_data.TrialDataTransformation;
-import preprocess_data.data_manipulaton.FrameDataManipulationStrategy;
+import preprocess_data.data_manipulaton.FrameManipulationStrategy;
 import preprocess_data.data_manipulaton.FrameShuffleManipulator;
 import preprocess_data.labeling.FrameLabelingStrategy;
 import preprocess_data.labeling.OneTargetLabeling;
@@ -42,11 +40,9 @@ public class TestNN {
 
         //Strategies/Assets
         FrameLabelingStrategy frameLabelingStrategy = new OneTargetLabeling("RASI", 35);
-        EuclideanDistanceNormalizer euclideanDistanceNormalizer = new EuclideanDistanceNormalizer();
-        FrameDataManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(10);
-        JsonToTrialParser jsonToTrialParser = new JsonToTrialParser();
-        TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy,manipulationStrategy, euclideanDistanceNormalizer);
-        TrialDataManager trialDataManager = new TrialDataManager(transformation,jsonToTrialParser);
+        FrameManipulationStrategy manipulationStrategy = new FrameShuffleManipulator(10);
+        TrialDataTransformation transformation = new TrialDataTransformation(frameLabelingStrategy,manipulationStrategy);
+        TrialDataManager trialDataManager = new TrialDataManager(transformation);
 
         //DataSet Iterators
         JsonTrialRecordReader trainDataReader = new JsonTrialRecordReader(trialDataManager);

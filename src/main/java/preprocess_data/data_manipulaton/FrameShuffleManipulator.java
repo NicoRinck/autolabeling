@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-public class FrameShuffleManipulator implements FrameDataManipulationStrategy {
+public class FrameShuffleManipulator implements FrameManipulationStrategy {
 
     private final int amountOfShuffles;
     private long seed;
@@ -32,6 +32,11 @@ public class FrameShuffleManipulator implements FrameDataManipulationStrategy {
         return resultFrames;
     }
 
+    @Override
+    public String toString() {
+       return "FrameShuffleManipulator(amountOfShuffles: " + amountOfShuffles + ")";
+    }
+
     private Frame getShuffledFrame(Frame frame) {
         ArrayList<Marker> newList = new ArrayList<Marker>(frame.getMarkers());
         if (hasSeed) {
@@ -41,4 +46,6 @@ public class FrameShuffleManipulator implements FrameDataManipulationStrategy {
         Collections.shuffle(newList);
         return new Frame(newList);
     }
+
+
 }

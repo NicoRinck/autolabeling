@@ -41,7 +41,8 @@ public class JsonTrialRecordReader extends BaseRecordReader {
 
     private void initIterators(final FileSplit fileSplit) {
         fileIterator = new TrialFileIterator(fileSplit);
-        fileContentIterator = trialDataManager.getTrialDataFromJson(fileIterator.next()).iterator();
+        trialDataManager.setTrialContent(fileIterator.next());
+        fileContentIterator = trialDataManager.getNextTrialContent().iterator();
     }
 
     public void initialize(Configuration configuration, InputSplit inputSplit) throws IOException, InterruptedException, IllegalArgumentException {
@@ -51,18 +52,20 @@ public class JsonTrialRecordReader extends BaseRecordReader {
     public List<Writable> next() {
         if (fileContentIterator.hasNext()) {
             return fileContentIterator.next();
-        }
-        else if (fileIterator.hasNext()) {
-            fileContentIterator = trialDataManager.getTrialDataFromJson(fileIterator.next()).iterator();
+        } else if (trialDataManager.hasNext()) {
+            fileContentIterator = trialDataManager.getNextTrialContent().iterator();
             return fileContentIterator.next();
-        }
-        else {
+        } else if (fileIterator.hasNext()) {
+            trialDataManager.setTrialContent(fileIterator.next());
+            fileContentIterator = trialDataManager.getNextTrialContent().iterator();
+            return fileContentIterator.next();
+        } else {
             throw new NoSuchElementException();
         }
     }
 
     public boolean hasNext() {
-        return !(!fileIterator.hasNext() && !fileContentIterator.hasNext());
+        return !(!fileIterator.hasNext() && !trialDataManager.hasNext() && !fileContentIterator.hasNext());
     }
 
     public List<String> getLabels() {
@@ -81,7 +84,6 @@ public class JsonTrialRecordReader extends BaseRecordReader {
         return null;
     }
 
-    //TODO!
     public Record nextRecord() {
         List<Writable> next = next();
         //metadata --> fileIndex/location (get from TrialFileIterator). Closer look: https://github.com/deeplearning4j/DataVec/blob/master/datavec-api/src/main/java/org/datavec/api/records/reader/impl/csv/CSVRecordReader.java
