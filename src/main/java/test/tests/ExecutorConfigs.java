@@ -2,7 +2,7 @@ package test.tests;
 
 import test.execution.AutomaticConfigExecutor;
 import preprocess_data.TrialDataManager;
-import preprocess_data.TrialDataManagerBuilder;
+import preprocess_data.builders.TrialDataManagerBuilder;
 import preprocess_data.TrialDataTransformation;
 import preprocess_data.data_manipulaton.FrameManipulationStrategy;
 import preprocess_data.data_manipulaton.FrameShuffleManipulator;

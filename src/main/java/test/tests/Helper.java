@@ -1,7 +1,11 @@
 package test.tests;
 
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
+import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.dataset.api.DataSet;
+import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -45,5 +49,25 @@ public class Helper {
             configurations.add(MultiLayerConfiguration.fromJson(s));
         }
         return configurations;
+    }
+
+    public static void logSingleEvaluationDetails(MultiLayerNetwork network, DataSetIterator testIterator) {
+        System.out.println("start evaluation");
+        testIterator.reset();
+
+        org.nd4j.linalg.dataset.DataSet testData = testIterator.next();
+        INDArray features = testData.getFeatures();
+        INDArray prediction = network.output(features);
+        System.out.println("single eval:");
+        System.out.println("Num Labels: " + network.numLabels());
+        Evaluation evaluation = new Evaluation(network.numLabels());
+        evaluation.eval(testData.getLabels().getRow(0), prediction.getRow(0));
+        System.out.println(evaluation.stats(false, true));
+        System.out.println("Datensatz 1 --> Features: ");
+        Helper.printINDArray(features.getRow(0));
+        System.out.println("Datensatz 1 --> Prediction: ");
+        Helper.printINDArray(prediction.getRow(0));
+        System.out.println("geschätzter Wert: ");
+        System.out.println(prediction.getRow(0).maxNumber());
     }
 }

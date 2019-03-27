@@ -81,25 +81,5 @@ public class TestNN {
 
         //Training
         nn.fit(trainDataIterator,10);
-
-        //Evaluation
-       /* System.out.println("start evaluation");
-        *//*Evaluation eval = new Evaluation(35);
-        while(testDataIterator.hasNext()) {
-            DataSet t = testDataIterator.next();
-            INDArray features = t.getFeatures();
-            INDArray labels = t.getLabels();
-            INDArray predicted = nn.output(features);
-            eval.eval(labels,predicted);
-        }*//*
-        Evaluation eval = nn.evaluate(testDataIterator);
-
-        System.out.println(eval.stats());*/
-
-       /* Evaluation evaluation = new Evaluation();
-        INDArray output = nn.output();
-        System.out.println("Output: " + output);
-        evaluation.eval(testData.getLabels(), output);
-        System.out.println(evaluation.stats());*/
     }
 }

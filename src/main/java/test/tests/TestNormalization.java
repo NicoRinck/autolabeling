@@ -22,7 +22,7 @@ import org.nd4j.linalg.dataset.api.preprocessor.NormalizerMinMaxScaler;
 import org.nd4j.linalg.learning.config.Sgd;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import preprocess_data.TrialDataManager;
-import preprocess_data.TrialDataManagerBuilder;
+import preprocess_data.builders.TrialDataManagerBuilder;
 import preprocess_data.TrialDataTransformation;
 import preprocess_data.data_manipulaton.FrameManipulationStrategy;
 import preprocess_data.data_manipulaton.FrameShuffleManipulator;

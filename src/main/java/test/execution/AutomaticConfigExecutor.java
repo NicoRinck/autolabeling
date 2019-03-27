@@ -23,6 +23,7 @@ public class AutomaticConfigExecutor {
     private final RecordReaderDataSetIterator testIterator;
     private final ResultLogger resultLogger;
     private final ArrayList<TrainingListener> listeners = new ArrayList<>();
+    private final DL4JNetworkTrainer networkExecutor;
 
     public AutomaticConfigExecutor(File train, File test, File logFile, TrialDataManager dataManager, int batchSize,
                                    NormalizerMinMaxScaler normalizer) throws IOException, InterruptedException, InstantiationException, IllegalAccessException {
@@ -32,17 +33,18 @@ public class AutomaticConfigExecutor {
         this.resultLogger.logNormalizer(normalizer);
     }
 
-    private void addPreProcessors(DataNormalization normalizer, RecordReaderDataSetIterator iterator) throws IllegalAccessException, InstantiationException {
-        DataNormalization normalizerCopy = normalizer.getClass().newInstance();
-        normalizer.fit(iterator);
-        iterator.setPreProcessor(normalizerCopy);
-    }
-
     public AutomaticConfigExecutor(File train, File test, File logFile, TrialDataManager dataManager, int batchSize) throws IOException, InterruptedException {
         this.resultLogger = new ResultLogger(logFile);
         this.trainIterator = initIterator(train, dataManager, batchSize);
         this.testIterator = initIterator(test, dataManager, batchSize);
         this.resultLogger.logDataInfo(dataManager, batchSize);
+        this.networkExecutor = new DL4JNetworkTrainer(trainIterator);
+    }
+
+    private void addPreProcessors(DataNormalization normalizer, RecordReaderDataSetIterator iterator) throws IllegalAccessException, InstantiationException {
+        DataNormalization normalizerCopy = normalizer.getClass().newInstance();
+        normalizer.fit(iterator);
+        iterator.setPreProcessor(normalizerCopy);
     }
 
     private RecordReaderDataSetIterator initIterator(File file, TrialDataManager trialDataManager, int batchSize) throws IOException, InterruptedException {
@@ -58,17 +60,15 @@ public class AutomaticConfigExecutor {
     }
 
     public void executeConfigs(ArrayList<MultiLayerConfiguration> configs, int epochsPerExecution, int repeats) {
-        final DL4JNetworkTrainer networkExecutor = new DL4JNetworkTrainer(trainIterator);
         for (int i = 0; i < configs.size(); i++) {
             System.out.println("Konfiguration " + (i + 1) + "/" + configs.size());
-            trainAndEvaluateNetwork(configs.get(i), repeats, epochsPerExecution, networkExecutor);
-
+            executeConfig(configs.get(i), repeats, epochsPerExecution);
         }
     }
 
-    private void trainAndEvaluateNetwork(MultiLayerConfiguration config, int repeats, int epoch, DL4JNetworkTrainer executor) {
+    public void executeConfig(MultiLayerConfiguration config, int repeats, int epoch) {
         for (int i = 0; i < repeats; i++) {
-            MultiLayerNetwork multiLayerNetwork = executor.trainNetwork(config, epoch);
+            MultiLayerNetwork multiLayerNetwork = networkExecutor.trainNetwork(config, epoch);
             Evaluation evaluation = multiLayerNetwork.evaluate(testIterator);
             resultLogger.log(multiLayerNetwork, evaluation);
             testIterator.reset();
