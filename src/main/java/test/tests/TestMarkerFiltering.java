@@ -1,6 +1,7 @@
 package test.tests;
 
 import datavec.JsonTrialRecordReader;
+import datavec.RandomizedTrialRecordReader;
 import org.datavec.api.split.FileSplit;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
@@ -51,28 +52,29 @@ public class TestMarkerFiltering {
                 .addLabelingStrategy(new OneTargetLabeling("LELB", selectedLabels.size()))
                 .withManipulation(new FrameShuffleManipulator(10))
                 .build())
-                .withNormalization(new CentroidNormalization(-1, 1))
+                .withNormalization(new CentroidNormalization(-1,1))
                 .filterMarkers(selectedLabels)
                 .build();
 
-
+        /*RandomizedTrialRecordReader train = new RandomizedTrialRecordReader(trialDataManager, 50000);
+        RandomizedTrialRecordReader test = new RandomizedTrialRecordReader(trialDataManager, 50000);*/
         JsonTrialRecordReader train = new JsonTrialRecordReader(trialDataManager);
         JsonTrialRecordReader test = new JsonTrialRecordReader(trialDataManager);
         train.initialize(new FileSplit(trainDirectory));
         test.initialize(new FileSplit(testDirectory));
 
-        RecordReaderDataSetIterator trainIterator = new RecordReaderDataSetIterator(train,50);
-        RecordReaderDataSetIterator testIterator = new RecordReaderDataSetIterator(test,50);
+        RecordReaderDataSetIterator trainIterator = new RecordReaderDataSetIterator(train, 10);
+        RecordReaderDataSetIterator testIterator = new RecordReaderDataSetIterator(test, 10);
 
         MultiLayerNetwork multiLayerNetwork = new MultiLayerNetwork(nnConfig(selectedLabels));
         multiLayerNetwork.init();
-        EvaluativeListener evaluativeListener = new EvaluativeListener(testIterator,1,InvocationType.EPOCH_END);
+        EvaluativeListener evaluativeListener = new EvaluativeListener(testIterator, 1, InvocationType.EPOCH_END);
         multiLayerNetwork.setListeners(new ScoreIterationListener(10000), evaluativeListener);
-        multiLayerNetwork.fit(trainIterator,20);
+        multiLayerNetwork.fit(trainIterator, 3);
 
         Evaluation evaluate = multiLayerNetwork.evaluate(testIterator);
-        System.out.println(evaluate.stats(false,true));
-        Helper.logSingleEvaluationDetails(multiLayerNetwork,testIterator);
+        System.out.println(evaluate.stats(false, true));
+        Helper.logSingleEvaluationDetails(multiLayerNetwork, testIterator);
     }
 
     private static MultiLayerConfiguration nnConfig(Set<String> selectedLabels) {
@@ -83,13 +85,13 @@ public class TestMarkerFiltering {
         return new NeuralNetConfiguration.Builder()
                 .seed(523)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .updater(new Sgd(0.1))
+                .updater(new Sgd(0.05))
                 .list()
                 .layer(new DenseLayer.Builder().activation(Activation.TANH).weightInit(WeightInit.NORMAL)
                         .nIn(inputSize).nOut(hiddenSize).build())
-                .layer(new DenseLayer.Builder().activation(Activation.RELU).weightInit(WeightInit.RELU)
+                .layer(new DenseLayer.Builder().activation(Activation.RELU).weightInit(WeightInit.RELU_UNIFORM)
                         .nIn(hiddenSize).nOut(hiddenSize).build())
-                .layer(new DenseLayer.Builder().activation(Activation.RELU).weightInit(WeightInit.RELU)
+                .layer(new DenseLayer.Builder().activation(Activation.RELU).weightInit(WeightInit.RELU_UNIFORM)
                         .nIn(hiddenSize).nOut(hiddenSize).build())
                 .layer(new OutputLayer.Builder(LossFunctions.LossFunction.MCXENT)
                         .activation(Activation.SOFTMAX).weightInit(WeightInit.XAVIER)

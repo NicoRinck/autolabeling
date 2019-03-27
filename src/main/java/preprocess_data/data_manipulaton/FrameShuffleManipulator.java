@@ -10,13 +10,13 @@ import java.util.Random;
 public class FrameShuffleManipulator implements FrameManipulationStrategy {
 
     private final int amountOfShuffles;
-    private long seed;
+    private Random random;
     private final boolean hasSeed;
 
     public FrameShuffleManipulator(int amountOfShuffles, long seed) {
         this.amountOfShuffles = amountOfShuffles;
-        this.seed = seed;
-        this.hasSeed = false;
+        this.random = new Random(seed);
+        this.hasSeed = true;
     }
 
     public FrameShuffleManipulator(int amountOfShuffles) {
@@ -34,18 +34,16 @@ public class FrameShuffleManipulator implements FrameManipulationStrategy {
 
     @Override
     public String toString() {
-       return "FrameShuffleManipulator(amountOfShuffles: " + amountOfShuffles + ")";
+        return "FrameShuffleManipulator(amountOfShuffles: " + amountOfShuffles + ")";
     }
 
     private Frame getShuffledFrame(Frame frame) {
         ArrayList<Marker> newList = new ArrayList<Marker>(frame.getMarkers());
         if (hasSeed) {
-            Collections.shuffle(newList,new Random(seed));
+            Collections.shuffle(newList, random);
             return new Frame(newList);
         }
         Collections.shuffle(newList);
         return new Frame(newList);
     }
-
-
 }
