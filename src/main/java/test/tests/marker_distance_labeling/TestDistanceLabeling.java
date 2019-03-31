@@ -1,4 +1,4 @@
-package test.tests;
+package test.tests.marker_distance_labeling;
 
 import datavec.JsonTrialRecordReader;
 import org.datavec.api.split.FileSplit;
@@ -32,6 +32,7 @@ import preprocess_data.data_normalization.CentroidNormalization;
 import preprocess_data.data_normalization.TrialNormalizationStrategy;
 import preprocess_data.labeling.FrameLabelingStrategy;
 import preprocess_data.labeling.OneTargetDistanceLabeling;
+import test.tests.Helper;
 
 import java.io.File;
 

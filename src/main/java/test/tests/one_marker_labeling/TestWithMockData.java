@@ -1,4 +1,4 @@
-package test.tests;
+package test.tests.one_marker_labeling;
 
 import datavec.JsonTrialRecordReader;
 import org.datavec.api.split.FileSplit;

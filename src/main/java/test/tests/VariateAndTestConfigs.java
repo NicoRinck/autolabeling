@@ -6,7 +6,7 @@ import test.execution.config_generation.LayerConfigVariator;
 import org.nd4j.linalg.learning.config.IUpdater;
 import org.nd4j.linalg.learning.config.Sgd;
 
-public class AutomaticExecution {
+public class VariateAndTestConfigs {
 
     public static void main(String[] args) throws Exception {
 

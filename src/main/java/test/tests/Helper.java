@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 public class Helper {
 
-    static void printINDArray(INDArray indArray) {
+    public static void printINDArray(INDArray indArray) {
         double[] array = indArray.toDoubleVector();
         for (int i = 0; i < array.length; i++) {
             System.out.print(i + ": " + array[i] + " | ");
