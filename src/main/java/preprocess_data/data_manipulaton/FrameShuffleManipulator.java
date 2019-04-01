@@ -19,14 +19,14 @@ public class FrameShuffleManipulator implements FrameManipulationStrategy {
         this.hasSeed = true;
     }
 
-    public FrameShuffleManipulator(int amountOfShuffles) {
+    public FrameShuffleManipulator(final int amountOfShuffles) {
         this.amountOfShuffles = amountOfShuffles;
         this.hasSeed = false;
     }
 
     public ArrayList<Frame> manipulateFrame(Frame frame) {
         ArrayList<Frame> resultFrames = new ArrayList<Frame>();
-        for (int i = 0; i < amountOfShuffles; i++) {
+        for (int i = amountOfShuffles; i >= 0; i--) {
             resultFrames.add(getShuffledFrame(frame));
         }
         return resultFrames;
