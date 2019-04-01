@@ -26,7 +26,7 @@ public class FrameShuffleManipulator implements FrameManipulationStrategy {
 
     public ArrayList<Frame> manipulateFrame(Frame frame) {
         ArrayList<Frame> resultFrames = new ArrayList<Frame>();
-        for (int i = amountOfShuffles; i >= 0; i--) {
+        for (int i = amountOfShuffles; i > 0; i--) {
             resultFrames.add(getShuffledFrame(frame));
         }
         return resultFrames;

@@ -27,9 +27,9 @@ public class TestComputationGraphConfigs {
         File testDirectory = new File("C:\\Users\\Nico Rinck\\Documents\\DHBW\\Studienarbeit\\Daten_Studienarbeit\\testData\\test");
         String[] markerLabels = {"C7", "CLAV", "LASI", "LELB", "LELBW", "LHUM4", "LHUMA", "LHUMP", "LHUMS", "LRAD", "LSCAP1", "LSCAP2", "LSCAP3", "LSCAP4", "LULN", "RASI", "RELB", "RELBW", "RHUM4", "RHUMA", "RHUMP", "RHUMS", "RRAD", "RSCAP1", "RSCAP2", "RSCAP3", "RSCAP4", "RULN", "SACR", "STRN", "T10", "THRX1", "THRX2", "THRX3", "THRX4"};
         TreeSet<String> selectedLabels = new TreeSet<>(Arrays.asList(markerLabels));
-        int batchSize = 20;
-        int shuffles = selectedLabels.size() + 5;
-        int recordReaderStorage = shuffles * 25000;
+        int shuffles = selectedLabels.size();
+        int batchSize = 20; //total amount of data should be multiple of batchSize (prevent error in last batch)
+        int recordReaderStorage = shuffles * 2000;
 
         TrialDataManager trialDataManager = TrialDataManagerBuilder.addTransformation(TrialDataTransformationBuilder
                 .addLabelingStrategy(new OneTargetLabeling("LELB", selectedLabels.size()))
@@ -48,8 +48,8 @@ public class TestComputationGraphConfigs {
         RecordReaderDataSetIterator trainIterator = new RecordReaderDataSetIterator(train, batchSize);
         RecordReaderDataSetIterator testIterator = new RecordReaderDataSetIterator(test, batchSize);
 
-        //best: multipleReshapes(,20,40,20) in 10 Epochen
-        ComputationGraph graph = new ComputationGraph(ConvolutionConfigs.multipleReshapes(selectedLabels, batchSize, 20, 10));
+        //best: multipleReshapes(,20,20,10) in 5 Epochen
+        ComputationGraph graph = new ComputationGraph(ConvolutionConfigs.singleReshape(selectedLabels, batchSize, 10));
         System.out.println();
         graph.init();
         EvaluativeListener evaluativeListener = new EvaluativeListener(testIterator, 1, InvocationType.EPOCH_END);

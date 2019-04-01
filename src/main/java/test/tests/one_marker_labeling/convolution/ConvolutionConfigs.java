@@ -17,6 +17,7 @@ import java.util.Set;
 
 public class ConvolutionConfigs {
 
+    //important! batchSize cannot vary during processing (--> last element)
     private static int inputSize;   //equals height of convolution input --> spatial: [inputSize,1]
     private static int outputSize;  //CNN kernel lowers amount of data (3 marker-coordinates to one value)
     //cnnChannels --> amount of kernel-operations on input data in cnn1
