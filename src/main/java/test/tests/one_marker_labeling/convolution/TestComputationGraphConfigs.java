@@ -3,8 +3,10 @@ package test.tests.one_marker_labeling.convolution;
 import datavec.RandomizedTrialRecordReader;
 import org.datavec.api.split.FileSplit;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
+import org.deeplearning4j.nn.conf.ComputationGraphConfiguration;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.optimize.api.InvocationType;
+import org.deeplearning4j.optimize.api.TrainingListener;
 import org.deeplearning4j.optimize.listeners.EvaluativeListener;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.nd4j.evaluation.classification.Evaluation;
@@ -14,6 +16,7 @@ import preprocess_data.builders.TrialDataTransformationBuilder;
 import preprocess_data.data_manipulaton.FrameShuffleManipulator;
 import preprocess_data.data_normalization.CentroidNormalization;
 import preprocess_data.labeling.OneTargetLabeling;
+import test.execution.DL4JNetworkTrainer;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +42,6 @@ public class TestComputationGraphConfigs {
                 .filterMarkers(selectedLabels)
                 .build();
 
-
         RandomizedTrialRecordReader train = new RandomizedTrialRecordReader(trialDataManager, recordReaderStorage);
         RandomizedTrialRecordReader test = new RandomizedTrialRecordReader(trialDataManager, recordReaderStorage);
         train.initialize(new FileSplit(trainDirectory));
@@ -49,15 +51,26 @@ public class TestComputationGraphConfigs {
         RecordReaderDataSetIterator testIterator = new RecordReaderDataSetIterator(test, batchSize);
 
         //best: multipleReshapes(,20,20,10) in 5 Epochen
-        ComputationGraph graph = new ComputationGraph(ConvolutionConfigs.singleReshape(selectedLabels, batchSize, 10));
-        System.out.println();
-        graph.init();
-        EvaluativeListener evaluativeListener = new EvaluativeListener(testIterator, 1, InvocationType.EPOCH_END);
-        graph.setListeners(new ScoreIterationListener(10000), evaluativeListener);
+        //beobachtung: hoher Wert bei cnn2Channels --> am anfang lernt es sehr langsam, dann am besten (bei 10)
+        DL4JNetworkTrainer networkTrainer = new DL4JNetworkTrainer(trainIterator);
+        TrainingListener[] listeners = {new EvaluativeListener(testIterator, 1, InvocationType.EPOCH_END),
+                new ScoreIterationListener(10000)};
+        networkTrainer.addListeners(listeners);
 
-        graph.fit(trainIterator, 5);
-        Evaluation evaluate = graph.evaluate(testIterator);
-        System.out.println(evaluate.stats(false, true));
+        /*ArrayList<ComputationGraphConfiguration> configs = new ArrayList<>();
+        configs.add(ConvolutionConfigs.multipleReshapes(selectedLabels, batchSize, 20, 10));
+        configs.add(ConvolutionConfigs.multipleReshapes(selectedLabels, batchSize, 10, 10));
+        configs.add(ConvolutionConfigs.multipleReshapes(selectedLabels, batchSize, 5, 5));
+        configs.add(ConvolutionConfigs.multipleReshapes(selectedLabels, batchSize, 10, 20));*/
+        //ComputationGraphConfiguration graph = ConvolutionConfigs.treeReshapesOneDeepLayer(selectedLabels, batchSize, 20, 10, 1);
+        ComputationGraphConfiguration graph = ConvolutionConfigs.treeReshapesOneDeepLayer(selectedLabels, batchSize, 20, 10, 5);
+        ComputationGraph computationGraph = new ComputationGraph(graph);
+        computationGraph.init();
+        computationGraph.addListeners(listeners);
+        computationGraph.fit(trainIterator,5);
+
+        Evaluation eval = computationGraph.evaluate(testIterator);
+        System.out.println(eval.stats(true,true));
     }
 
     /* feedforward and log path to test layer outputs.

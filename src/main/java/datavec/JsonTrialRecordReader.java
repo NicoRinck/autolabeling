@@ -20,8 +20,8 @@ import java.util.NoSuchElementException;
 
 public class JsonTrialRecordReader extends BaseRecordReader {
 
-    private final TrialDataManager trialDataManager;
-    private Iterator<JsonArray> fileIterator;
+    protected final TrialDataManager trialDataManager;
+    protected TrialFileIterator fileIterator;
     private Iterator<ArrayList<Writable>> fileContentIterator;
     private FileSplit fileSplit;
 

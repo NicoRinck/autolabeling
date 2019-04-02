@@ -48,6 +48,10 @@ public class TrialFileIterator implements Iterator<JsonArray> {
         return rootElement.getAsJsonObject(TRIAL_PROPERTY).getAsJsonArray(FRAMES_PROPERTY);
     }
 
+    public int getCurrentFileIndex() {
+        return currentIndex;
+    }
+
     public void remove() {
         throw new UnsupportedOperationException();
     }
