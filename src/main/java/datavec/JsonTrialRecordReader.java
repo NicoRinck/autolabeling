@@ -37,7 +37,7 @@ public class JsonTrialRecordReader extends BaseRecordReader {
         initIterators(fileSplit);
     }
 
-    private void initIterators(final FileSplit fileSplit) {
+    protected void initIterators(final FileSplit fileSplit) {
         fileIterator = new TrialFileIterator(fileSplit);
         trialDataManager.setTrialContent(fileIterator.next());
         fileContentIterator = trialDataManager.getNextTrialContent().iterator();
