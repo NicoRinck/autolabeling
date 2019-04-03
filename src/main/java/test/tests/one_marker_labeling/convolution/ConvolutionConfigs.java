@@ -116,12 +116,12 @@ public class ConvolutionConfigs {
                         new ReshapeVertex('f', newShape, null), "CNN3")
                 .layer("DL2", new DenseLayer.Builder().activation(Activation.TANH).weightInit(WeightInit.XAVIER)
                         .nIn(outputSize * cnn3Channels).nOut(outputSize * cnn3Channels).build(), "Reshape3")
-                .layer("DL2", new DenseLayer.Builder().activation(Activation.TANH).weightInit(WeightInit.XAVIER)
-                        .nIn(outputSize * cnn3Channels).nOut(outputSize * cnn3Channels).build(), "Reshape3")
-                .layer("DL3", new OutputLayer.Builder(LossFunctions.LossFunction.MCXENT)
+                .layer("DL3", new DenseLayer.Builder().activation(Activation.TANH).weightInit(WeightInit.XAVIER)
+                        .nIn(outputSize * cnn3Channels).nOut(outputSize * cnn3Channels).build(), "DL2")
+                .layer("DL4", new OutputLayer.Builder(LossFunctions.LossFunction.MCXENT)
                         .activation(Activation.SOFTMAX).weightInit(WeightInit.XAVIER)
-                        .nIn(outputSize * cnn3Channels).nOut(outputSize).build(), "DL2")
-                .setOutputs("DL3")
+                        .nIn(outputSize * cnn3Channels).nOut(outputSize).build(), "DL3")
+                .setOutputs("DL4")
                 .setInputTypes(InputType.convolutionalFlat(inputSize, 1, 1))
                 .build();
     }
