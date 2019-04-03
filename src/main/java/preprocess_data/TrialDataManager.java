@@ -23,7 +23,7 @@ public class TrialDataManager {
                             Set<String> acceptedMarkers) {
         this.dataTransformer = dataTransformer;
         this.normalizationStrategy = normalizationStrategy;
-        jsonToTrialParser.addFilter(acceptedMarkers);
+        jsonToTrialParser.setFilter(acceptedMarkers);
     }
 
     public TrialDataManager(TrialDataTransformation dataTransformer) {
@@ -69,6 +69,10 @@ public class TrialDataManager {
 
     public int getAmountOfFrames() {
         return this.currentAmountOfFrames;
+    }
+
+    public void setNewFilter(Set<String> filterMarkers) {
+        jsonToTrialParser.setFilter(filterMarkers);
     }
 
     public String getInfoString() {

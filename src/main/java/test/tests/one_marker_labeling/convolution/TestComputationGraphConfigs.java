@@ -62,12 +62,13 @@ public class TestComputationGraphConfigs {
         configs.add(ConvolutionConfigs.multipleReshapes(selectedLabels, batchSize, 10, 10));
         configs.add(ConvolutionConfigs.multipleReshapes(selectedLabels, batchSize, 5, 5));
         configs.add(ConvolutionConfigs.multipleReshapes(selectedLabels, batchSize, 10, 20));*/
-        //ComputationGraphConfiguration graph = ConvolutionConfigs.treeReshapesOneDeepLayer(selectedLabels, batchSize, 20, 10, 1);
-        ComputationGraphConfiguration graph = ConvolutionConfigs.treeReshapesOneDeepLayer(selectedLabels, batchSize, 20, 10, 5);
+        //ComputationGraphConfiguration graph = ConvolutionConfigs.treeReshapesOneDeepLayer(selectedLabels, batchSize, 20, 10, 1); --> 92%
+        /*ComputationGraphConfiguration graph = ConvolutionConfigs.treeReshapesOneDeepLayer(selectedLabels, batchSize, 40, 20, 10); --> 95%*/
+        ComputationGraphConfiguration graph = ConvolutionConfigs.treeReshapesOneDeepLayer(selectedLabels, batchSize, 40, 20, 10);
         ComputationGraph computationGraph = new ComputationGraph(graph);
         computationGraph.init();
         computationGraph.addListeners(listeners);
-        computationGraph.fit(trainIterator,5);
+        computationGraph.fit(trainIterator,10);
 
         Evaluation eval = computationGraph.evaluate(testIterator);
         System.out.println(eval.stats(true,true));

@@ -10,34 +10,37 @@ import preprocess_data.TrialDataManager;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class SequenceJsonTrialRecordReader extends JsonTrialRecordReader implements SequenceRecordReader {
+public class SequentialMarkerwiseTrialRecordReader extends JsonTrialRecordReader implements SequenceRecordReader {
 
-    private final int sequenceLength;
+    private final boolean hasSequenceLength;
+    private int sequenceLength = -1;
+    private Set<String> markerStrings;
+    private Iterator<String> markerStringsIterator;
     private int currentTrialAmountOfFrames;
     private int currentFrameIndex;
 
-    public SequenceJsonTrialRecordReader(TrialDataManager trialDataManager, int sequenceLength) {
-        super(trialDataManager);
+    public SequentialMarkerwiseTrialRecordReader(TrialDataManager dataManager, Set<String> markerStrings, int sequenceLength) {
+        super(dataManager);
+        this.markerStrings = markerStrings;
         this.sequenceLength = sequenceLength;
+        this.hasSequenceLength = false;
+    }
+
+    public SequentialMarkerwiseTrialRecordReader(TrialDataManager dataManager, Set<String> markerStrings) {
+        super(dataManager);
+        this.markerStrings = markerStrings;
+        this.hasSequenceLength = false;
     }
 
     @Override
     public void initialize(InputSplit inputSplit) throws IOException, InterruptedException, IllegalArgumentException {
         super.initialize(inputSplit);
-        this.currentTrialAmountOfFrames = trialDataManager.getAmountOfFrames();//UPDATE!!
-        this.currentFrameIndex = 0;
+        initNewTrial();
     }
 
     @Override
-    //einzeln für jeden Marker --> storage (shuffle?)
-    //erster Frame verwerfern, (2ter Frame für Labeling benötigt
-    //letzer Frame --> ist der vorletzte
-    //wo befinden sich die Labels im finalen sequentiellen DS
-    //da variable Anzahl an Zeitschritten möglich sind --> wohl im DS des Zeitpunkts
     public List<List<Writable>> sequenceRecord() {
         int framesLeftInTrial = framesLeftInTrial();
         if (framesLeftInTrial >= sequenceLength) {
@@ -45,17 +48,35 @@ public class SequenceJsonTrialRecordReader extends JsonTrialRecordReader impleme
             return getNextTrialSequence(sequenceLength);
         } else if (framesLeftInTrial > 0) {
             return getNextTrialSequence(framesLeftInTrial);
+        } else if (markerStringsIterator.hasNext()) {
+            setMarkerFilter(markerStringsIterator.next());
+            return sequenceRecord();
         } else if (fileIterator.hasNext()) {
             trialDataManager.setTrialContent(fileIterator.next());
-            resetIndexes();
+            resetForNextTrial();
             return sequenceRecord();
         } else
             throw new NoSuchElementException();
     }
 
-    private void resetIndexes() {
+    private void setMarkerFilter(String markerString) {
+        Set<String> newSet = new HashSet<>();
+        newSet.add(markerString);
+        this.trialDataManager.setNewFilter(newSet);
+    }
+
+    private void resetForNextTrial() {
+        this.markerStringsIterator = markerStrings.iterator();
+        initNewTrial();
+    }
+
+    private void initNewTrial() {
         this.currentFrameIndex = 0;
         this.currentTrialAmountOfFrames = trialDataManager.getAmountOfFrames();
+        if (!hasSequenceLength) {
+            sequenceLength = currentTrialAmountOfFrames;
+        }
+        setMarkerFilter(markerStringsIterator.next()); //set first Marker as Filter
     }
 
     private List<List<Writable>> getNextTrialSequence(int sequenceLength) {
@@ -67,6 +88,9 @@ public class SequenceJsonTrialRecordReader extends JsonTrialRecordReader impleme
     }
 
     private int framesLeftInTrial() {
+        if (!hasSequenceLength) {
+            return sequenceLength;
+        }
         return currentTrialAmountOfFrames - (currentFrameIndex + sequenceLength);
     }
 

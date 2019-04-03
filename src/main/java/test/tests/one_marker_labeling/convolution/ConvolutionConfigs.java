@@ -90,6 +90,42 @@ public class ConvolutionConfigs {
                 .build();
     }
 
+    static ComputationGraphConfiguration treeReshapesMultipleDeepLayers(Set<String> selectedLabels, int batchSize,
+                                                                  int cnn1Channels, int cnn2Channels, int cnn3Channels) {
+        initInputSize(selectedLabels);
+        int[] newShape = {batchSize, 1, 1, cnn3Channels * outputSize}; //final shape of outputs
+
+        return new NeuralNetConfiguration.Builder()
+                .seed(523)
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+                .updater(new Sgd(0.01))
+                .graphBuilder()
+                .addInputs("1")
+                .layer("CNN1", new ConvolutionLayer.Builder().nIn(1).nOut(cnn1Channels)
+                        .kernelSize(3, 1).stride(3, 1).build(), "1")
+                .addVertex("Reshape1",
+                        new ReshapeVertex(batchSize, 1, cnn1Channels, outputSize), "CNN1")
+                .layer("CNN2", new ConvolutionLayer.Builder().nIn(1).nOut(cnn2Channels)
+                        .kernelSize(cnn1Channels, 1).stride(1, 1).build(), "Reshape1")
+                .addVertex("Reshape2",
+                        new ReshapeVertex(batchSize, 1, cnn2Channels, outputSize), "CNN2")
+                .layer("CNN3", new ConvolutionLayer.Builder().nIn(1).nOut(cnn3Channels)
+                        .kernelSize(cnn2Channels, 1).stride(1, 1).build(), "Reshape2")
+                //vertex to convert the inputs in order of markers
+                .addVertex("Reshape3",
+                        new ReshapeVertex('f', newShape, null), "CNN3")
+                .layer("DL2", new DenseLayer.Builder().activation(Activation.TANH).weightInit(WeightInit.XAVIER)
+                        .nIn(outputSize * cnn3Channels).nOut(outputSize * cnn3Channels).build(), "Reshape3")
+                .layer("DL2", new DenseLayer.Builder().activation(Activation.TANH).weightInit(WeightInit.XAVIER)
+                        .nIn(outputSize * cnn3Channels).nOut(outputSize * cnn3Channels).build(), "Reshape3")
+                .layer("DL3", new OutputLayer.Builder(LossFunctions.LossFunction.MCXENT)
+                        .activation(Activation.SOFTMAX).weightInit(WeightInit.XAVIER)
+                        .nIn(outputSize * cnn3Channels).nOut(outputSize).build(), "DL2")
+                .setOutputs("DL3")
+                .setInputTypes(InputType.convolutionalFlat(inputSize, 1, 1))
+                .build();
+    }
+
     static ComputationGraphConfiguration singleReshape(Set<String> selectedLabels, int batchSize, int cnnChannels) {
         initInputSize(selectedLabels);
         int[] newShape = {batchSize, 1, 1, cnnChannels * outputSize}; //final shape of outputs

@@ -1,6 +1,5 @@
 package datavec;
 
-import com.google.gson.JsonArray;
 import org.datavec.api.conf.Configuration;
 import org.datavec.api.records.Record;
 import org.datavec.api.records.metadata.RecordMetaData;
@@ -20,7 +19,7 @@ import java.util.NoSuchElementException;
 
 public class JsonTrialRecordReader extends BaseRecordReader {
 
-    protected final TrialDataManager trialDataManager;
+    protected TrialDataManager trialDataManager;
     protected TrialFileIterator fileIterator;
     private Iterator<ArrayList<Writable>> fileContentIterator;
     private FileSplit fileSplit;
